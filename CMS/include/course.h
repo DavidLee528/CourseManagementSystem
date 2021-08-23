@@ -17,11 +17,11 @@ public:
     std::string & GetCourseNumber(); 
     std::string & GetCourseTitle(); 
     std::string & GetCourseAttribute(); 
-    size_t & GetTotalClassHours(); 
-    size_t & GetTeachingHours(); 
-    size_t & GetExperimentHours(); 
-    size_t & GetCredit(); 
-    int & GetCourseSemester(); 
+    size_t GetTotalClassHours(); 
+    size_t GetTeachingHours(); 
+    size_t GetExperimentHours(); 
+    size_t GetCredit(); 
+    int GetCourseSemester(); 
 
 
 }; 

@@ -2,6 +2,7 @@
 
 #include "../include/CMS.h"
 #include "../include/interface.h"
+#include "../include/data.h"
 
 int main(int argc, char **argv) {
 

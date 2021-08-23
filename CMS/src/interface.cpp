@@ -5,12 +5,14 @@
 
 #include "../include/CMS.h"
 #include "../include/interface.h"
+#include "../include/data.h"
 
 using std::cin; 
 using std::cout; 
 using std::endl; 
 
 void CInterface::rMain() {
+    cout << "hello world" << endl; 
     return ;
 }
 
@@ -26,12 +28,12 @@ bool CInterface::Login() {
         return CInterface::DisplayErrorMessage("Fail to input username and password. "); 
 
     // 检查用户名与密码
-    if (!CheckPasswordValidity(std::make_pair(username, password)))
+    if (!CData::CheckPasswordValidity(std::make_pair(username, password)))
         return CInterface::DisplayErrorMessage("Invalid username or password. "); 
 
     // 生成权限码
     int authCode = 0; 
-    if (!GetUserAuthorization(std::make_pair(username, password), authCode))
+    if (!CData::GetUserAuthorization(std::make_pair(username, password), authCode))
         return CInterface::DisplayErrorMessage("Failed to get authorization. "); 
     
     // TODO: 保存权限码
@@ -55,15 +57,6 @@ bool CInterface::UserInfoInput(std::string &username, std::string &password) {
     return true; 
 }
 
-bool CInterface::CheckPasswordValidity(const std::pair<std::string, std::string> &input) {
-    return true; 
-}
-
-bool CInterface::GetUserAuthorization(const std::pair<std::string, std::string> &user, int &authCode) {
-    return true; 
-}
-
-
 bool CInterface::InitScreen() {
 
     system("clear"); 
@@ -77,6 +70,7 @@ bool CInterface::InitScreen() {
 
 bool CInterface::DisplayErrorMessage(const std::string &msg) {
 
+    std::cerr << msg << endl; 
 
     return false; 
 }
