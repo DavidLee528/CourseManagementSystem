@@ -1,18 +1,24 @@
 #ifndef _STUDENT_H
 #define _STUDENT_H
 
+using std::string; 
+
 class CStudent {
 
 private: 
-    std::string username; 
-    std::string password; 
-    std::string name; 
-    std::string major; 
+    string username; 
+    string password; 
+    string name; 
+    string major; 
 
 public: 
-    std::string & GetStudentUsername(); 
-    std::string & GetStudentName(); 
-    std::string & GetStudentMajor(); 
+    CStudent(const string &_username); 
+    CStudent(const CStudent &rhs); 
+    ~CStudent(); 
+
+    string & GetStudentUsername(); 
+    string & GetStudentName(); 
+    string & GetStudentMajor(); 
     
 
 }; 

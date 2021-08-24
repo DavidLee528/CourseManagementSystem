@@ -6,6 +6,10 @@
 #include "../include/CMS.h"
 #include "../include/interface.h"
 #include "../include/data.h"
+#include "admin.h"
+#include "student.h"
+#include "teacher.h"
+
 
 using std::cin; 
 using std::cout; 
@@ -32,13 +36,18 @@ bool CInterface::Login() {
         return CInterface::DisplayErrorMessage("Invalid username or password. "); 
 
     // 生成权限码
-    int authCode = 0; 
+    int authCode = -1; 
     if (!CData::GetUserAuthorization(std::make_pair(username, password), authCode))
         return CInterface::DisplayErrorMessage("Failed to get authorization. "); 
+    if (authCode == -1)
+        return CInterface::DisplayErrorMessage("Wrong authorization code. "); 
     
-    // TODO: 保存权限码
-    // 
-
+    // 创建用户对象
+    // 保存用户信息
+    if (authCode == ADMIN_AUTH_CODE)  CAdmin admin(username); 
+    if (authCode == STUDENT_AUTH_CODE) CStudent student(username); 
+    if (authCode == TEACHER_AUTH_CODE) CTeacher teacher(username); 
+  
     return true; 
 }
 
