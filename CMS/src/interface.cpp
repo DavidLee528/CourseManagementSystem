@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 #include <utility>
-#include <unistd.h>
+#include <conio.h>
 
 #include "../include/CMS.h"
 #include "../include/interface.h"
@@ -86,7 +86,7 @@ bool CInterface::Login() {
 bool CInterface::UserInfoInput(std::string &username, std::string &password) {
     cout << "Username: "; 
     cin >> username; 
-    password = getpass("Password: "); 
+    WindowsGetPass("Password: ", password);
     return true; 
 }
 
@@ -126,4 +126,25 @@ void CInterface::tMain(CTeacher &teacher) {
 void CInterface::GetOption(const string &hint, char option) {
     cout << GREEN << SOFTWARE_TITLE << NONE << BLUE << hint << NONE << ": "; 
     cin >> option; 
+}
+
+std::string& CInterface::WindowsGetPass(const std::string prompt, std::string& Password) {
+    char ch;
+    int index = 0;
+    char password[50];
+
+    cout << "Password: " << endl;
+    while ((ch = _getch()) != '\r') {
+        if (ch != '\b') {
+            printf("*");
+            password[index++] = ch;
+        }
+        else {
+            printf("\b \b");
+            index--;
+        }
+    }
+    password[index] = '\0';
+
+    Password = password;
 }
