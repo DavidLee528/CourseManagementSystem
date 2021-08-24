@@ -15,11 +15,26 @@ using std::cin;
 using std::cout; 
 using std::endl; 
 
-void CInterface::rMain() {
-    cout << "hello world" << endl; 
-    return ;
+/**
+ * @description: 
+ * @param {string} &msg
+ * @return {*}
+ */
+bool CInterface::DisplayErrorMessage(const std::string &msg) {
+
+    std::cerr << msg << endl; 
+
+    return false; 
 }
 
+
+/**
+ * @description: 用户登录验证
+ *               划分用户角色
+ *               用户分流进入不同的主要函数
+ * @param {*} void
+ * @return {*} 为真则登录成功
+ */
 bool CInterface::Login() {
 
     // 屏幕初始化
@@ -44,9 +59,18 @@ bool CInterface::Login() {
     
     // 创建用户对象
     // 保存用户信息
-    if (authCode == ADMIN_AUTH_CODE)  CAdmin admin(username); 
-    if (authCode == STUDENT_AUTH_CODE) CStudent student(username); 
-    if (authCode == TEACHER_AUTH_CODE) CTeacher teacher(username); 
+    if (authCode == ADMIN_AUTH_CODE)  {
+        CAdmin admin(username); 
+        aMain(admin); 
+    }
+    if (authCode == STUDENT_AUTH_CODE) {
+        CStudent student(username); 
+        sMain(student); 
+    }
+    if (authCode == TEACHER_AUTH_CODE) {
+        CTeacher teacher(username); 
+        tMain(teacher); 
+    }
   
     return true; 
 }
@@ -66,6 +90,11 @@ bool CInterface::UserInfoInput(std::string &username, std::string &password) {
     return true; 
 }
 
+/**
+ * @description: 
+ * @param {*}
+ * @return {*}
+ */
 bool CInterface::InitScreen() {
 
     system("clear"); 
@@ -77,9 +106,24 @@ bool CInterface::InitScreen() {
     return true; 
 }
 
-bool CInterface::DisplayErrorMessage(const std::string &msg) {
 
-    std::cerr << msg << endl; 
+void CInterface::aMain(CAdmin &admin) {
+    
+    char userOption = -1; 
+    CAdmin::ShowOptionsLv1(); 
+    CInterface::GetOption("Select ", userOption); 
 
-    return false; 
+}
+
+void CInterface::sMain(CStudent &student) {
+
+}
+
+void CInterface::tMain(CTeacher &teacher) {
+    
+}
+
+void CInterface::GetOption(const string &hint, char option) {
+    cout << GREEN << SOFTWARE_TITLE << NONE << BLUE << hint << NONE << ": "; 
+    cin >> option; 
 }

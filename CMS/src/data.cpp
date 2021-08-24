@@ -1,9 +1,3 @@
-/*
- * @ Author: 李天昊
- * @ Description: 
- * @ Date: 
- * @ E-mail: 13121515269@163.com
- */
 #include <iostream>
 #include <string>
 #include <fstream>
@@ -84,5 +78,7 @@ bool CData::GetUserAuthorization(const pair<string, string> &user, int &authCode
 
     return true; 
 }
+
+
 
 
