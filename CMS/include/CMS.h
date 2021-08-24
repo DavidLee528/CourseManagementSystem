@@ -1,9 +1,3 @@
-/*
- * @ Author: 李天昊
- * @ Description: 
- * @ Date: 
- * @ E-mail: 13121515269@163.com
- */
 #ifndef _CMS_H
 #define _CMS_H
 
@@ -20,6 +14,9 @@
 #define         NONE                    "\033[m"
 
 #define         PSWD_FILE_PATH          "./data/user.dat"
+#define         TEACHER_FILE_PATH       "./data/teacher.dat"
+#define         STUDENT_FILE_PATH       "./data/student.dat"
+
  
 
 #endif

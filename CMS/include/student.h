@@ -7,7 +7,6 @@ class CStudent {
 
 private: 
     string username; 
-    string password; 
     string name; 
     string major; 
 

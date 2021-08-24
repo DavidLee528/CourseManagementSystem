@@ -3,12 +3,17 @@
 #include <fstream>
 #include <sstream>
 #include <unordered_map>
+#include <vector>
 
 
 #include "CMS.h"
-#include "../include/interface.h"
-#include "../include/data.h"
+#include "interface.h"
+#include "data.h"
+#include "teacher.h"
+#include "student.h"
+#include "admin.h"
 
+using std::ios; 
 using std::ifstream; 
 using std::ofstream; 
 using std::fstream; 
@@ -30,7 +35,7 @@ bool CData::CheckPasswordValidity(const std::pair<std::string, std::string> &inp
 
     // 打开user.dat文件
     ifstream user_data(PSWD_FILE_PATH, ifstream::in); 
-    if (!user_data.is_open()) return CInterface::DisplayErrorMessage("Cannot open file. "); 
+    if (!user_data.is_open()) return CInterface::CMSErrorReport("Cannot open file. "); 
     
     // 读取user.dat文件
     // 使用关联容器unordered_map存储信息
@@ -47,11 +52,11 @@ bool CData::CheckPasswordValidity(const std::pair<std::string, std::string> &inp
 
     // 未找到用户
     if (iter == userlist.end())
-        return CInterface::DisplayErrorMessage("Cannot find username in file 'user.dat'. "); 
+        return CInterface::CMSErrorReport("Cannot find username in file 'user.dat'. "); 
 
     // 密码错误
     if ((*iter).second != input.second)
-        return CInterface::DisplayErrorMessage("Wrong password. "); 
+        return CInterface::CMSErrorReport("Wrong password. "); 
     
     user_data.close(); 
     return true; 
@@ -74,11 +79,40 @@ bool CData::GetUserAuthorization(const pair<string, string> &user, int &authCode
     // 管理员
     else if (username == "admin") authCode = ADMIN_AUTH_CODE;  
     // 不合法情况
-    else return CInterface::DisplayErrorMessage("Generate authorization code failed. "); 
+    else return CInterface::CMSErrorReport("Generate authorization code failed. "); 
 
     return true; 
 }
 
+/**
+ * @description: 录入一次密码
+ * @param {string} &username 用户名
+ * @return {*} 为真则成功
+ */
+bool CData::SetPassword(const string &username, const string &newPassword) {
+
+    // 读方式打开二进制文件
+    ifstream user_data(PSWD_FILE_PATH, ios::in|ios::binary); 
 
 
+}
+
+/**
+ * @description: 向文件以二进制写入一个教师信息
+ *               需要检查教师是否重复
+ * @param {CTeacher} &teacher CTeacher类对象
+ * @return {*} 为真则成功
+ */
+bool CData::AddTeacherData(const CTeacher &teacher) {
+
+    // 写方式打开二进制文件
+    fstream out(TEACHER_FILE_PATH, ios::app|ios::binary); 
+    if (!out.is_open()) return CInterface::CMSErrorReport("Cannot open file."); 
+
+
+    out.write((char*)&teacher, sizeof(teacher)); 
+
+    out.close(); 
+    return true; 
+}
 

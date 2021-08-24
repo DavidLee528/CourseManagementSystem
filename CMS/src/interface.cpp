@@ -1,26 +1,33 @@
 #include <iostream>
 #include <string>
 #include <utility>
-#include <unistd.h>
+#include <ctime>
 
-#include "../include/CMS.h"
-#include "../include/interface.h"
-#include "../include/data.h"
+#include "CMS.h"
+#include "interface.h"
+#include "data.h"
 #include "admin.h"
 #include "student.h"
 #include "teacher.h"
+
+#ifdef _WIN32
+#include <conio.h>
+#else 
+#include <unistd.h>
+#endif
 
 
 using std::cin; 
 using std::cout; 
 using std::endl; 
+using std::string; 
 
 /**
  * @description: 
  * @param {string} &msg
  * @return {*}
  */
-bool CInterface::DisplayErrorMessage(const std::string &msg) {
+bool CInterface::CMSErrorReport(const std::string &msg) {
 
     std::cerr << msg << endl; 
 
@@ -39,23 +46,23 @@ bool CInterface::Login() {
 
     // 屏幕初始化
     if (!CInterface::InitScreen()) 
-        return CInterface::DisplayErrorMessage("Failed to initialize the screen. "); 
+        return CInterface::CMSErrorReport("Failed to initialize the screen. "); 
     
     // 键盘输入用户名与密码
     std::string username, password; 
     if (!CInterface::UserInfoInput(username, password))
-        return CInterface::DisplayErrorMessage("Fail to input username and password. "); 
+        return CInterface::CMSErrorReport("Fail to input username and password. "); 
 
     // 检查用户名与密码
     if (!CData::CheckPasswordValidity(std::make_pair(username, password)))
-        return CInterface::DisplayErrorMessage("Invalid username or password. "); 
+        return CInterface::CMSErrorReport("Invalid username or password. "); 
 
     // 生成权限码
     int authCode = -1; 
     if (!CData::GetUserAuthorization(std::make_pair(username, password), authCode))
-        return CInterface::DisplayErrorMessage("Failed to get authorization. "); 
+        return CInterface::CMSErrorReport("Failed to get authorization. "); 
     if (authCode == -1)
-        return CInterface::DisplayErrorMessage("Wrong authorization code. "); 
+        return CInterface::CMSErrorReport("Wrong authorization code. "); 
     
     // 创建用户对象
     // 保存用户信息
@@ -86,7 +93,11 @@ bool CInterface::Login() {
 bool CInterface::UserInfoInput(std::string &username, std::string &password) {
     cout << "Username: "; 
     cin >> username; 
-    password = getpass("Password: "); 
+    #ifdef _WIN32
+        WindowGetPass("Password: ", password)
+    #else
+        password = getpass("Password: "); 
+    #endif
     return true; 
 }
 
@@ -109,9 +120,41 @@ bool CInterface::InitScreen() {
 
 void CInterface::aMain(CAdmin &admin) {
     
-    char userOption = -1; 
-    CAdmin::ShowOptionsLv1(); 
-    CInterface::GetOption("Select ", userOption); 
+    
+    while (1) {
+        string userOption1 = "#"; 
+        string userOption2 = "#"; 
+        CAdmin::ShowOptionsLv1(); 
+        CInterface::GetOption("Please select", userOption1); 
+        if (userOption1 == "1") {
+            // 管理教师
+            CAdmin::ShowOptionsLv2_1(); 
+            CInterface::GetOption("Please select", userOption2); 
+            if (userOption2 == "0") continue; 
+            CAdmin::ManageTeacher(userOption2); 
+        } else if (userOption1 == "2") {
+            // 管理学生
+            CAdmin::ShowOptionsLv2_2(); 
+
+
+        } else if (userOption1 == "3") {
+            // 管理课程
+            CAdmin::ShowOptionsLv2_3(); 
+
+
+        } else if (userOption1 == "0") {
+            // 退出系统
+            CInterface::Flush(); 
+            CMSPrompt("Press any key to exit..."); 
+            getchar(); 
+            return ; 
+        } else {
+            cout << "_default" << endl; 
+            continue; 
+        }
+
+        break;   
+    }
 
 }
 
@@ -123,7 +166,56 @@ void CInterface::tMain(CTeacher &teacher) {
     
 }
 
-void CInterface::GetOption(const string &hint, char option) {
-    cout << GREEN << SOFTWARE_TITLE << NONE << BLUE << hint << NONE << ": "; 
+void CInterface::GetOption(const string &prompt, string& option) {
+    CInterface::CMSPrompt(prompt); 
     cin >> option; 
+}
+
+void CInterface::CMSPrompt(const string &prompt) {
+    cout << GREEN << SOFTWARE_TITLE << NONE << BLUE << prompt << NONE << "  "; 
+}
+
+#ifdef _WIN32
+string & CInterface::WindowsGetPass(const std::string prompt, std::string& _password) {
+    char ch;
+    int index = 0;
+    char password[50];
+
+    cout << "Password: " << endl;
+    while ((ch = _getch()) != '\r') {
+        if (ch != '\b') {
+            printf("*");
+            password[index++] = ch;
+        }
+        else {
+            printf("\b \b");
+            index--;
+        }
+    }
+    password[index] = '\0';
+
+    _password = password;
+}
+#endif
+
+/**
+ * @description: 清空缓冲区
+ * @param {*} void
+ * @return {*} void
+ */
+void CInterface::Flush() {
+    char ch; 
+    while ((ch = getchar()) != '\n' && ch != EOF)
+        ; 
+}
+
+/**
+ * @description: 获取当前日期
+ * @param {*} void
+ * @return {*} 返回一个string对象，格式如"2021年8月24日下午"
+ */
+string & CInterface::GetDate() {
+    // TODO: 获取当前日期
+    // 
+    
 }
