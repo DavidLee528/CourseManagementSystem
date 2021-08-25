@@ -109,10 +109,71 @@ bool CData::CheckUsernameFormat(const string &username, const int authCode) {
  * @param {string} &username 用户名
  * @return {*} 为真则成功
  */
-bool CData::SetPassword(const string &username, const string &newPassword) {
+bool CData::SetPassword(const string& username, const string& newPassword){
+    // 打开user.dat文件
+    ifstream user_data(PSWD_FILE_PATH, ifstream::in);
+    if (!user_data.is_open()) return CInterface::CMSErrorReport("Cannot open file");
 
+    // 读取user.dat文件
+    // 使用关联容器unordered_map存储信息
+    string line, _username, _password;
+    unordered_map<string, string> userlist;
+    while (getline(user_data, line)) {
+        stringstream ssLine(line);
+        ssLine >> _username >> _password;
+        userlist.insert(make_pair(_username, _password));
+    }
+    // 得到迭代器
+    unordered_map<string, string>::iterator iter = userlist.find(username); 
+
+    // 用户不存在
+    // 增加一条用户记录
+    if (iter == userlist.end()) {
+        userlist.insert(make_pair(username, newPassword)); 
+        return true; 
+    }
+
+    // 修改
+    iter->second = newPassword;
+
+    // 关闭后打开并清空文件内容
+    user_data.close();
+    ofstream outfile;
+    outfile.open(PSWD_FILE_PATH, ofstream::out | ofstream::trunc);
+
+    // 写入修改后的内容
+    for (iter = userlist.begin(); iter != userlist.end(); iter++) {
+        outfile << iter->first << " " << iter->second << endl;
+    }
+
+    outfile.close();
+    return true;
+}
+
+/**
+ * @description: 从文件user.dat中删去一组用户, 即删去一整行
+ * @param {string} &username 需要删除的用户名
+ * @return {*} 删除成功则返回值为真
+ */
+bool CData::DelPassword(const string &username) {
+
+    // TODO:
+    // 
 
 }
+
+/**
+ * @description: 从文件user.dat中判断username是否唯一
+ * @param {string} &username 需要检查的username
+ * @return {*} 唯一则返回值为真
+ */
+bool CData::IsUniqueUser(const string &username) {
+
+    // TODO:
+    // 
+
+}
+
 
 /**
  * @description: 从文件中查找教师
@@ -121,15 +182,25 @@ bool CData::SetPassword(const string &username, const string &newPassword) {
  * @return {*} 为真则成功，否则未找到
  */
 bool CData::FindTeacherByUsername(const string &username, CTeacher &teacher) {
-
+	int flag = 0;
     ifstream teacher_data(TEACHER_FILE_PATH, ios::in); 
-    if (!teacher_data.is_open()) return CInterface::CMSErrorReport("Cannot open file."); 
-
-    // TODO:
-    // 若查找失败则函数返回值false
-    // 文件数据样例已经保存在teacher.dat中
-    // 
-
+    if (!teacher_data.is_open()) return CInterface::CMSErrorReport("Cannot open file"); 
+    
+    string line, _username, _name, _major;
+    while (getline(teacher_data, line)) {
+        stringstream ssLine(line);
+        ssLine >> _username >> _name >> _major;
+        
+        if (username == _username) {
+	   	    teacher.SetTeacherUsername(_username);
+	    	teacher.SetTeacherName(_name);
+	    	teacher.SetTeacherMajor(_major);
+	    	flag = 1;
+	    	break;
+		}
+	}
+	if (flag == 0) return false;
+	
     teacher_data.close(); 
     return true; 
 }
@@ -141,15 +212,26 @@ bool CData::FindTeacherByUsername(const string &username, CTeacher &teacher) {
  * @return {*} 为真则成功, 否则未找到
  */
 bool CData::FindStudentByUsername(const string &username, CStudent &student) {
-
+    
+	int flag = 0;
     ifstream student_data(STUDENT_FILE_PATH, ios::in); 
     if (!student_data.is_open()) return CInterface::CMSErrorReport("Cannot open file"); 
-
-    // TODO:
-    // 若查找失败则函数返回值false
-    // 文件数据样例已经保存在student.dat中
-    // 
-
+    
+    string line, _username, _name, _major;
+    while (getline(student_data, line)) {
+        stringstream ssLine(line);
+        ssLine >> _username >> _name >> _major;
+        
+        if (username == _username){
+	   	    student.SetStudentUsername(_username);
+	    	student.SetStudentName(_name);
+	    	student.SetStudentMajor(_major);
+	    	flag = 1;
+	    	break;
+		}
+	}
+	if (flag == 0) return false;
+	
     student_data.close(); 
     return true; 
 }
@@ -169,12 +251,14 @@ bool CData::AddTeacherData(const CTeacher &teacher) {
     if (!out.is_open()) return CInterface::CMSErrorReport("Cannot open file."); 
     if (CData::FindTeacherByUsername(teacher.GetTeacherUsername(), t)) return CInterface::CMSErrorReport("Teacher exist."); 
 
+    // 向teacher.dat增加一条教师信息
     out << teacher.GetTeacherUsername() << " "; 
     out << teacher.GetTeacherName() << " "; 
     out << teacher.GetTeacherMajor() << " "; 
     out << endl << endl; 
 
-    // SetPassword(teacher.GetTeacherUsername(), teacher.password); 
+    // 向user.dat增加一条用户记录
+    SetPassword(teacher.GetTeacherUsername(), teacher.password); 
 
     out.close(); 
     return true; 
@@ -186,6 +270,8 @@ bool CData::AddTeacherData(const CTeacher &teacher) {
  * @return {*} 为真则成功
  */
 bool CData::DelTeacherData(const string &username) {
+
+
 
 }
 

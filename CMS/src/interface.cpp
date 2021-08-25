@@ -161,7 +161,7 @@ void CInterface::aMain(CAdmin &admin) {
 }
 
 void CInterface::sMain(CStudent &student) {
-
+    // 高泽军完成
 }
 
 void CInterface::tMain(CTeacher &teacher) {
