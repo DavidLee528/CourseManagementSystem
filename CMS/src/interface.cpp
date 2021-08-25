@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <utility>
+#include <ctime>
 
 #include "../include/CMS.h"
 #include "../include/interface.h"
@@ -127,22 +128,22 @@ void CInterface::aMain(CAdmin &admin) {
         CInterface::GetOption("Please select", userOption1); 
         if (userOption1 == "1") {
             // 管理教师
-            CAdmin::ShowOptionsLv2_1(); 
-            CInterface::GetOption("Please select", userOption2); 
-            if (userOption2 == "0") continue; 
-            CAdmin::ManageTeacher(userOption2); 
+            CAdmin::ManageTeacher(); 
+            continue; 
         } else if (userOption1 == "2") {
             // 管理学生
             CAdmin::ShowOptionsLv2_2(); 
             CInterface::GetOption("Please select", userOption2); 
             if (userOption2 == "0") continue; 
             // CAdmin::ManageStudent(userOption2); 
+            continue; 
         } else if (userOption1 == "3") {
             // 管理课程
             CAdmin::ShowOptionsLv2_3(); 
             CInterface::GetOption("Please select", userOption2); 
             if (userOption2 == "0") continue; 
             // CAdmin::ManageCourse(userOption2); 
+            continue; 
         } else if (userOption1 == "0") {
             // 退出系统
             CInterface::Flush(); 
@@ -173,7 +174,7 @@ void CInterface::GetOption(const string &prompt, string& option) {
 }
 
 void CInterface::CMSPrompt(const string &prompt) {
-    cout << GREEN << SOFTWARE_TITLE << NONE << BLUE << prompt << NONE << "  "; 
+    cout << GREEN << SOFTWARE_TITLE << NONE << BLUE << prompt << NONE << "  " << endl; 
 }
 
 #ifdef _WIN32
@@ -218,5 +219,25 @@ void CInterface::Flush() {
 string & CInterface::GetDate() {
     // TODO: 获取当前日期
     // 
-    
+    struct tm *local;
+	time_t t = time(0);
+	
+	char tmp[64];
+	strftime(tmp, sizeof(tmp), "%Y年%m月%d日",localtime(&t) );
+	string time = tmp;
+	
+	int h;
+	char hours[20];
+	strftime(hours, sizeof(hours), "%H", localtime(&t));
+	h = atoi(hours);
+	
+	if (h < 5) time += "凌晨";
+	else if (h < 8) time += "早晨"; 
+	else if (h < 11) time += "上午";
+	else if (h < 13) time += "中午";
+	else if (h < 16) time += "下午";
+	else if (h < 19) time += "傍晚";
+	else if (h < 24) time += "晚上";
+	
+	return time;
 }

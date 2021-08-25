@@ -2,8 +2,10 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <map>
 #include <unordered_map>
 #include <vector>
+#include <algorithm>
 
 
 #include "../include/CMS.h"
@@ -20,12 +22,14 @@ using std::ofstream;
 using std::fstream; 
 using std::string; 
 using std::stringstream; 
+using std::map; 
 using std::unordered_map; 
 using std::pair; 
 using std::make_pair; 
 using std::cout; 
 using std::endl; 
 using std::vector; 
+using std::sort; 
 
 /**
  * @description: 此函数读取user.txt文件，验证密码有效性
@@ -87,6 +91,20 @@ bool CData::GetUserAuthorization(const pair<string, string> &user, int &authCode
 }
 
 /**
+ * @description: 检查用户名格式合法性，合法性检查规则见函数CData::GetUserAuthorization()
+ *               根据authCode判断用户角色，见CMS.h     
+ * @param {string} &username 待检查用户名
+ * @param {int} authCode 用户权限码
+ * @return {*} 合法则返回值为真
+ */
+bool CData::CheckUsernameFormat(const string &username, const int authCode) {
+
+    // TODO: 检查用户名格式合法性
+    // 
+
+}
+
+/**
  * @description: 录入一次密码
  * @param {string} &username 用户名
  * @return {*} 为真则成功
@@ -100,7 +118,7 @@ bool CData::SetPassword(const string &username, const string &newPassword) {
  * @description: 从文件中查找教师
  * @param {string} &username 教工号
  * @param {CTeacher} &teacher
- * @return {*} 为真则成功
+ * @return {*} 为真则成功，否则未找到
  */
 bool CData::FindTeacherByUsername(const string &username, CTeacher &teacher) {
 
@@ -120,7 +138,7 @@ bool CData::FindTeacherByUsername(const string &username, CTeacher &teacher) {
  * @description: 从文件中查找学生
  * @param {string} &username 学号
  * @param {CStudent} &student
- * @return {*} 为真则成功
+ * @return {*} 为真则成功, 否则未找到
  */
 bool CData::FindStudentByUsername(const string &username, CStudent &student) {
 
@@ -137,15 +155,19 @@ bool CData::FindStudentByUsername(const string &username, CStudent &student) {
 }
 
 /**
- * @description: 向文件以二进制写入一个教师信息
+ * @description: 向文件写入一个教师信息
  *               需要检查教师是否重复
  * @param {CTeacher} &teacher CTeacher类对象
  * @return {*} 为真则成功
  */
 bool CData::AddTeacherData(const CTeacher &teacher) {
 
+    // 初始化文件
+    // 检查新增教师是否重复
     ofstream out(TEACHER_FILE_PATH, ios::app); 
+    CTeacher t; 
     if (!out.is_open()) return CInterface::CMSErrorReport("Cannot open file."); 
+    if (CData::FindTeacherByUsername(teacher.GetTeacherUsername(), t)) return CInterface::CMSErrorReport("Teacher exist."); 
 
     out << teacher.GetTeacherUsername() << " "; 
     out << teacher.GetTeacherName() << " "; 
@@ -159,33 +181,70 @@ bool CData::AddTeacherData(const CTeacher &teacher) {
 }
 
 /**
- * @description: 向文件以二进制读取教师信息
+ * @description: 从文件删除一个教师信息
+ * @param {string} &username 教工号
+ * @return {*} 为真则成功
+ */
+bool CData::DelTeacherData(const string &username) {
+
+}
+
+/**
+ * @description: 从文件读取教师信息
  *               若没有指定username，则查询所有教师信息
- * @param {*}
- * @return {*}
+ * @param {*} 使用可变长数组teacherList带出教师数据
+ * @return {*} 为真则成功
  */
 bool CData::QueTeacherData(vector<CTeacher> &teacherList, const string &username) {
 
+    // 初始化输入文件流
+    // 检查参数错误
     ifstream in(TEACHER_FILE_PATH, ios::in); 
     if (!in.is_open()) return CInterface::CMSErrorReport("Cannot open file."); 
+    if (username.empty()) return CInterface::CMSErrorReport("Empty username."); 
+    if (!teacherList.empty()) teacherList.clear(); 
 
+    // 用户名为默认参数时，查询全部教师信息
+    // 用户名非默认参数时，查询用户名对应的教师信息
     if (username == "$default$") {
-        
+        // 读取teacher.dat
+        string line, _username, _name, _major; 
+        vector<vector<string> > sVec; 
+        vector<string> element; 
+        while (getline(in, line)) {
+            stringstream ssLine(line); 
+            ssLine >> _username >> _name >> _major; 
+            element.clear(); 
+            element.push_back(_username); 
+            element.push_back(_name); 
+            element.push_back(_major); 
+            sVec.push_back(element); 
+        }
+        // 根据username排序
+        sort(sVec.begin(), sVec.end(), [](const vector<string> &lhs, const vector<string> &rhs) {
+            if (lhs[0].length() != rhs[0].length()) return lhs[0].length() < rhs[0].length(); 
+            return lhs[0] < rhs[0]; 
+        }); 
+        // 遍历带出
+        CTeacher teacher; 
+        for (vector<vector<string> >::const_iterator iter = sVec.cbegin(); iter != sVec.cend(); ++iter) {
+            teacher.SetTeacherUsername((*iter)[0]); 
+            teacher.SetTeacherName((*iter)[1]); 
+            teacher.SetTeacherMajor((*iter)[2]); 
+            teacherList.push_back(teacher); 
+        }
     } else {
         CTeacher teacher; 
-        FindByUsername(); 
-        cout << teacher << endl; 
+        FindTeacherByUsername(username, teacher); 
+        teacherList.push_back(teacher); 
     }
     
-    
-    
-
     in.close(); 
     return true; 
 }
 
 /**
- * @description: 向文件以二进制写入一个学生信息
+ * @description: 向文件写入一个学生信息
  *               需要检查学生是否重复
  * @param {CStudent} &student CStudent类对象
  * @return {*} 为真则成功

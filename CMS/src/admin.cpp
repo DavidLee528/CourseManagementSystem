@@ -44,7 +44,7 @@ void CAdmin::ShowOptionsLv2_1() {
     cout << "[1] 增加教师" << endl; 
     cout << "[2] 删除教师" << endl; 
     cout << "[3] 修改教师" << endl; 
-    cout << "[4] 查看所有教师" << endl; 
+    cout << "[4] 查看教师" << endl; 
     cout << "[0] 返回上一级" << endl << endl; 
 }
 
@@ -55,7 +55,7 @@ void CAdmin::ShowOptionsLv2_2() {
     cout << "[1] 增加学生" << endl; 
     cout << "[2] 删除学生" << endl; 
     cout << "[3] 修改学生" << endl; 
-    cout << "[4] 查看所有学生" << endl; 
+    cout << "[4] 查看学生" << endl; 
     cout << "[0] 返回上一级" << endl << endl; 
 }
 
@@ -66,7 +66,7 @@ void CAdmin::ShowOptionsLv2_3() {
     cout << "[1] 增加课程" << endl; 
     cout << "[2] 删除课程" << endl; 
     cout << "[3] 修改课程" << endl; 
-    cout << "[4] 查看所有课程" << endl; 
+    cout << "[4] 查看课程" << endl; 
     cout << "[0] 返回上一级" << endl << endl; 
 }
 
@@ -75,18 +75,31 @@ void CAdmin::ShowOptionsLv2_3() {
 // ======================================================================= //
 
 
-bool CAdmin::ManageTeacher(const string &option) {
-    if (option == "1") {
-        CAdmin::AddTeacher(); 
-    } else if (option == "2") {
-        CAdmin::DelTeacher(); 
-    } else if (option == "3") {
-        CAdmin::ModTeacher(); 
-    } else if (option == "4") {
-        CAdmin::QueTeacher(); 
-    } else {
-        return CInterface::CMSErrorReport("In function ManageTeacher"); 
+bool CAdmin::ManageTeacher() {
+    
+    while (1) {
+        string userOption; 
+        CAdmin::ShowOptionsLv2_1(); 
+        CInterface::GetOption("Please select", userOption); 
+        if (userOption == "1") {
+            CAdmin::AddTeacher(); 
+            continue; 
+        } else if (userOption == "2") {
+            CAdmin::DelTeacher(); 
+            continue; 
+        } else if (userOption == "3") {
+            CAdmin::ModTeacher(); 
+            continue; 
+        } else if (userOption == "4") {
+            CAdmin::QueTeacher(); 
+            continue; 
+        } else if (userOption == "0") {
+            break; 
+        } else {
+            return CInterface::CMSErrorReport("In function ManageTeacher"); 
+        }
     }
+    
     return true; 
 }
 
@@ -97,19 +110,28 @@ bool CAdmin::ManageTeacher(const string &option) {
  */
 void CAdmin::AddTeacher() {
     CInterface::CMSPrompt("添加教师信息"); 
-    cout << endl; 
     CTeacher teacher; 
     cin >> teacher; 
-    if (CData::AddTeacherData(teacher)) CInterface::CMSPrompt("添加成功"); 
+    if (CData::AddTeacherData(teacher)) CInterface::CMSPrompt("添加成功, 输入任意键以继续管理教师..."); 
     else CInterface::CMSPrompt("添加失败"); 
+    CInterface::Flush(); 
+    getchar(); 
 }
 
 void CAdmin::DelTeacher() {
-    // 删除一位教师
+    CInterface::CMSPrompt("删除教师信息"); 
+    CInterface::CMSPrompt("请输入教工号"); 
+    string str; 
+    cin >> str; 
+    if (CData::DelTeacherData(str)) CInterface::CMSPrompt("删除成功，输入任意键以继续管理教师..."); 
+    else CInterface::CMSPrompt("删除失败"); 
+    CInterface::Flush(); 
+    getchar(); 
 }
 
 void CAdmin::ModTeacher() {
     // 修改一位教师
+
 }
 
 void CAdmin::QueTeacher() {
@@ -119,13 +141,12 @@ void CAdmin::QueTeacher() {
     vector<CTeacher> teacherList; 
     if (str == "#") CData::QueTeacherData(teacherList); 
     else CData::QueTeacherData(teacherList, str); 
-
-    return ;
+    // 打印
+    cout << endl; 
     for (vector<CTeacher>::const_iterator iter = teacherList.cbegin(); iter != teacherList.cend(); ++iter) {
-        // cout << (*iter) << endl; 
-        (*iter).GetTeacherUsername(); 
+        cout << (*iter) << endl; 
     }
-
+    
 }
 
 
@@ -159,6 +180,9 @@ void CAdmin::AddStudent() {
     cout << "专  业："; cin >> str; student.SetStudentMajor(str); 
     if (CData::AddStudentData(student)) CInterface::CMSPrompt("添加成功"); 
     else CInterface::CMSPrompt("添加失败"); 
+    CInterface::Flush(); 
+    getchar(); 
+    CInterface::Flush(); 
 }
 
 void CAdmin::DelStudent() {
