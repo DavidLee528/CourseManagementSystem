@@ -208,9 +208,30 @@ bool CData::DelPassword(const string &username) {
  */
 bool CData::IsUniqueUser(const string &username) {
 
-    // TODO:
-    // 
+    // username出现次数 
+    int flag = 0;
+	
+    // 初始化文件
+    ifstream user_data(PSWD_FILE_PATH, ios::in); 
+    if (!user_data.is_open()) return CInterface::CMSErrorReport("Cannot open file."); 
+    
+    // 读取user.dat文件
+    // 遍历文件计算用户名出现次数
+    string line, _username, _password;
+    unordered_map <string, string> userlist;
+    while (getline(user_data, line)) {
+        stringstream ssLine(line);
+        ssLine >> _username;
+        if (_username == username){
+            flag++;
+            if (flag > 1)
+        	return CInterface::CMSErrorReport("Username is not unique.");
+	}
+    }
+    if (flag == 0) 
+	return CInterface::CMSErrorReport("Cannot find username in file 'user.dat'. "); 
 
+    return true;
 }
 
 
