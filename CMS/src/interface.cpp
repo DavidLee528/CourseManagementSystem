@@ -153,8 +153,7 @@ void CInterface::aMain(CAdmin &admin) {
         } else {
             cout << "_default" << endl; 
             continue; 
-        }
-
+        }   
         break;   
     }
 

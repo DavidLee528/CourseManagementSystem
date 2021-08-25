@@ -99,9 +99,19 @@ bool CData::GetUserAuthorization(const pair<string, string> &user, int &authCode
  */
 bool CData::CheckUsernameFormat(const string &username, const int authCode) {
 
-    // TODO: 检查用户名格式合法性
-    // 
+    switch (authCode) {
+        case 1: 
+            if (username.length() != 11) return false; 
+            break; 
+        case 2: 
+            if (username.length() != 4 && username.length() != 6) return false; 
+            break; 
+        default: 
+            return CInterface::CMSErrorReport("Wrong authCode."); 
+            break; 
+    }
 
+    return true;
 }
 
 /**
@@ -123,6 +133,7 @@ bool CData::SetPassword(const string& username, const string& newPassword){
         ssLine >> _username >> _password;
         userlist.insert(make_pair(_username, _password));
     }
+
     // 得到迭代器
     unordered_map<string, string>::iterator iter = userlist.find(username); 
 
@@ -245,11 +256,17 @@ bool CData::FindStudentByUsername(const string &username, CStudent &student) {
 bool CData::AddTeacherData(const CTeacher &teacher) {
 
     // 初始化文件
-    // 检查新增教师是否重复
     ofstream out(TEACHER_FILE_PATH, ios::app); 
-    CTeacher t; 
     if (!out.is_open()) return CInterface::CMSErrorReport("Cannot open file."); 
-    if (CData::FindTeacherByUsername(teacher.GetTeacherUsername(), t)) return CInterface::CMSErrorReport("Teacher exist."); 
+
+    // 检查是否重复添加
+    CTeacher t; 
+    if (CData::FindTeacherByUsername(teacher.GetTeacherUsername(), t)) 
+        return CInterface::CMSErrorReport("Teacher exist."); 
+    
+    // 检查用户名格式合法性
+    if (!CData::CheckUsernameFormat(teacher.GetTeacherUsername())) 
+        return CInterface::CMSErrorReport("Wrong username format"); 
 
     // 向teacher.dat增加一条教师信息
     out << teacher.GetTeacherUsername() << " "; 
@@ -271,8 +288,39 @@ bool CData::AddTeacherData(const CTeacher &teacher) {
  */
 bool CData::DelTeacherData(const string &username) {
 
+    ifstream teacherData(TEACHER_FILE_PATH, ios::in); 
+    if (!teacherData.is_open()) return CInterface::CMSErrorReport("Cannot open file."); 
+    
+    // 读取user.dat文件
+    // 使用关联容器unordered_map存储信息
+    string line, _username, password; 
+    unordered_map<string, string> teacherList; 
+    while (getline(teacherData, line)) {
+        stringstream ssLine(line); 
+        ssLine >> _username >> password; 
+        teacherList.insert(make_pair(username, password)); 
+    }
 
+    // 生成新的关联容器
+    // 除了待删除用户外, 其余用户拷贝到新的关联容器中
+    unordered_map<string, string> newTeacherList; 
+    for (unordered_map<string, string>::const_iterator iter = teacherList.cbegin(); iter != teacherList.cend(); ++iter) {
+        if ((*iter).first != username) newTeacherList.insert(make_pair((*iter).first, (*iter).second)); 
+    }
 
+    teacherData.close(); 
+
+    // 清空文件内容
+    ofstream newTeacherData(TEACHER_FILE_PATH, ios::out | ios::trunc); 
+    if (!newTeacherData.is_open()) return CInterface::CMSErrorReport("Cannot open file."); 
+    
+    // 向文件写入内容
+    for (unordered_map<string, string>::const_iterator iter = newTeacherList.cbegin(); iter != newTeacherList.cend(); ++iter) {
+        newTeacherData << (*iter).first << " " << (*iter).second << endl; 
+    }
+
+    newTeacherData.close(); 
+    return true; 
 }
 
 /**

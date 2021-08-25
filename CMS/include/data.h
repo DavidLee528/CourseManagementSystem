@@ -17,12 +17,15 @@ public:
     CData(); 
     ~CData(); 
 
+    
+
+    // 通用接口
     static bool CheckPasswordValidity(const std::pair<std::string, std::string> &input); 
     static bool GetUserAuthorization(const std::pair<std::string, std::string> &user, int &authCode); 
     static bool CheckUsernameFormat(const string &username, const int authCode); 
-
-    // 通用接口
     static bool SetPassword(const string &username, const string &newPassword);   
+    static bool DelPassword(const string &username); 
+    static bool IsUniqueUser(const string &username); 
     static bool FindTeacherByUsername(const string &username, CTeacher &teacher);   
     static bool FindStudentByUsername(const string &username, CStudent &student);   
 

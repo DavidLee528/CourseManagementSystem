@@ -135,8 +135,7 @@ void CAdmin::ModTeacher() {
 }
 
 void CAdmin::QueTeacher() {
-    CInterface::CMSPrompt("查询教师信息"); 
-    CInterface::CMSPrompt("请输入教工号(输入#以查询全部教师)"); 
+    CInterface::CMSPrompt("查询教师信息, 请输入教工号(输入#以查询全部教师)"); 
     string str; cin >> str; 
     vector<CTeacher> teacherList; 
     if (str == "#") CData::QueTeacherData(teacherList); 
@@ -144,7 +143,7 @@ void CAdmin::QueTeacher() {
     // 打印
     cout << endl; 
     for (vector<CTeacher>::const_iterator iter = teacherList.cbegin(); iter != teacherList.cend(); ++iter) {
-        cout << (*iter) << endl; 
+        cout << (*iter).GetTeacherUsername() << (*iter).GetTeacherName() << (*iter).GetTeacherMajor() << endl; 
     }
     
 }
