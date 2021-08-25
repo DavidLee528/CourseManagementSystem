@@ -115,6 +115,17 @@ bool CData::CheckUsernameFormat(const string &username, const int authCode) {
 }
 
 /**
+ * @description: 检查课程编号合法性
+ * @param {string} &courseNumber 待检查课程编码
+ * @return {*} 合法则返回值为真
+ */
+bool CData::CheckCourseNumberFormat(const string &courseNumber) {
+    if (courseNumber.length() != 6) return false; 
+    return true; 
+}
+
+
+/**
  * @description: 录入一次密码
  * @param {string} &username 用户名
  * @return {*} 为真则成功
@@ -387,7 +398,7 @@ bool CData::ModTeacherData(const CTeacher &teacher, const string &username) {
     CData::SetPassword(username, teacher.password); 
     
     // 读取teacher.dat文件
-    // 使用关联容器unordered_map存储信息
+    // 使用vector存储信息
     vector<string> elem; 
     vector<vector<string> > teacherList; 
     string line, _username, password, name, major; 
@@ -472,13 +483,205 @@ bool CData::QueTeacherData(vector<CTeacher> &teacherList, const string &username
     return true; 
 }
 
-/**
- * @description: 向文件写入一个学生信息
- *               需要检查学生是否重复
- * @param {CStudent} &student CStudent类对象
- * @return {*} 为真则成功
- */
-bool CData::AddStudentData(const CStudent &student) {
 
+
+
+/**
+ * @description: 向文件一门课程
+ * @param {CCourse} &course 一个CCourse类对象
+ * @return {*} 为真则添加成功
+ */
+bool CData::AddCourseData(const CCourse &course) {
+
+    // 初始化文件
+    ofstream courseData(COURSE_FILE_PATH, ios::app); 
+    if (!courseData.is_open()) return CInterface::CMSErrorReport("Cannot open file."); 
+
+    // 检查是否重复添加
+    // CTeacher t; 
+    // if (CData::FindTeacherByUsername(course.GetTeacherUsername(), t)) 
+    //     return CInterface::CMSErrorReport("Teacher exist."); 
+    
+    // 检查课程格式合法性
+    if (!CData::CheckCourseNumberFormat(course.GetCourseNumber())) 
+        return CInterface::CMSErrorReport("Wrong course number format"); 
+
+    // 向course.dat增加一条课程信息
+    courseData << course.GetCourseNumber() << " "; 
+    courseData << course.GetCourseTitle() << " "; 
+    courseData << course.GetCourseAttribute() << " "; 
+    courseData << course.GetTotalClassHours() << " "; 
+    courseData << course.GetTeachingHours() << " "; 
+    courseData << course.GetCredit() << " "; 
+    courseData << course.GetCourseSemester() << "\n"; 
+
+    courseData.close(); 
+    return true; 
+}
+
+/**
+ * @description: 
+ * @param {string} &courseNumber
+ * @return {*}
+ */
+bool CData::DelCourseData(const string &courseNumber) {
+    
+    // 初始化
+    ifstream courseData(COURSE_FILE_PATH, ios::in); 
+    if (!courseData.is_open()) return CInterface::CMSErrorReport("Cannot open file."); 
+    
+    // 读取teacher.dat文件
+    // 将全部文件存入内存(跳过待删除课程)
+    map<vector<string>, vector<size_t> > courseList; 
+    string line; 
+    string _courseNumber, courseTitle, courseAttribute; 
+    size_t totalClassHour, teachingHours, experimentHours, credit, courseSemester; 
+    while (getline(courseData, line)) {
+        stringstream ssLine(line); 
+        ssLine >> _courseNumber >> courseTitle >> courseAttribute >> totalClassHour; 
+        ssLine >> teachingHours >> experimentHours >> credit >> courseSemester; 
+        // 跳过待删除用户
+        if (courseNumber == _courseNumber) continue; 
+        vector<string> sElem{_courseNumber, courseTitle, courseAttribute}; 
+        vector<size_t> iElem{totalClassHour, teachingHours, experimentHours, credit, courseSemester}; 
+        courseList.insert(make_pair(sElem, iElem)); 
+    }
+
+    // 清空文件内容
+    courseData.close(); 
+    ofstream newCourseData(COURSE_FILE_PATH, ios::out | ios::trunc); 
+    if (!newCourseData.is_open()) return CInterface::CMSErrorReport("Cannot open file."); 
+    
+    // 向文件写入内容
+    for (map<vector<string>, vector<size_t> >::const_iterator iter = courseList.cbegin(); iter != courseList.cend(); ++iter) {
+        newCourseData << (*iter).first[0] << " " << (*iter).first[1] << " "; 
+        newCourseData << (*iter).first[2] << " " << (*iter).second[0] << " "; 
+        newCourseData << (*iter).second[1] << " " << (*iter).second[2] << " "; 
+        newCourseData << (*iter).second[3] << " " << (*iter).second[4] << "\n"; 
+    }
+
+    newCourseData.close(); 
+    return true; 
+}
+
+/**
+ * @description: 修改课程信息
+ * @param {string} &course
+ * @return {*}
+ */
+bool CData::ModCourseData(const CCourse &course) {
+    // 初始化
+    ifstream courseData(COURSE_FILE_PATH, ios::in); 
+    if (!courseData.is_open()) return CInterface::CMSErrorReport("Cannot open file."); 
+
+    // 读取course.dat文件
+    // 使用vector存储信息
+    vector<string> elem; 
+    map<vector<string>, vector<size_t> > courseList; 
+    string line, _courseNumber, courseTitle, courseAttribute; 
+    size_t totalClassHour, teachingHours, experimentHours, credit, courseSemester; 
+    while (getline(courseData, line)) {
+        stringstream ssLine(line); 
+        ssLine >> _courseNumber >> courseTitle >> courseAttribute >> totalClassHour; 
+        ssLine >> teachingHours >> experimentHours >> credit >> courseSemester; 
+        // 修改用户信息
+        if (course.GetCourseNumber() == _courseNumber) {
+            _courseNumber = course.GetCourseNumber(); 
+            courseTitle = course.GetCourseTitle(); 
+            courseAttribute = course.GetCourseAttribute(); 
+            totalClassHour = course.GetTotalClassHours(); 
+            teachingHours = course.GetTeachingHours(); 
+            experimentHours = course.GetExperimentHours(); 
+            credit = course.GetCredit(); 
+            courseSemester = course.GetCourseSemester(); 
+        }
+        vector<string> sElem{_courseNumber, courseTitle, courseAttribute}; 
+        vector<size_t> iElem{totalClassHour, teachingHours, experimentHours, credit, courseSemester}; 
+        courseList.insert(make_pair(sElem, iElem)); 
+}
+
+    // 清空文件内容
+    courseData.close(); 
+    ofstream newCourseData(TEACHER_FILE_PATH, ios::out | ios::trunc); 
+    if (!newCourseData.is_open()) return CInterface::CMSErrorReport("Cannot open file."); 
+    
+    // 向文件写入内容
+    for (map<vector<string>, vector<size_t> >::const_iterator iter = courseList.cbegin(); iter != courseList.cend(); ++iter) {
+        newCourseData << (*iter).first[0] << " " << (*iter).first[1] << " ";
+        newCourseData << (*iter).first[2] << " " << (*iter).second[0] << " "; 
+        newCourseData << (*iter).second[1] << " " << (*iter).second[2] << " "; 
+        newCourseData << (*iter).second[3] << " " << (*iter).second[4] << "\n"; 
+    }
+
+    newCourseData.close(); 
+    return true; 
+}
+
+/**
+ * @description: 查询课程信息
+ * @param {*}
+ * @return {*}
+ */
+bool CData::QueCourseData(vector<CCourse> &courseList, const string &courseNumber) {
+
+    // 初始化输入文件流
+    // 检查参数错误
+    ifstream in(COURSE_FILE_PATH, ios::in); 
+    if (!in.is_open()) return CInterface::CMSErrorReport("Cannot open file."); 
+    if (courseNumber.empty()) return CInterface::CMSErrorReport("Empty course number."); 
+    if (!courseList.empty()) courseList.clear(); 
+
+    // 用户名为默认参数时，查询全部教师信息
+    // 用户名非默认参数时，查询课程编号对应的课程信息
+    if (courseNumber == "$default$") {
+        // 读取course.dat
+        string line; 
+        string _courseNumber, courseTitle, courseAttribute; 
+        size_t totalClassHour, teachingHours, experimentHours, credit, courseSemester; 
+        map<vector<string>, vector<size_t> > _courseList; 
+        while (getline(in, line)) {
+            stringstream ssLine(line); 
+            ssLine >> _courseNumber >> courseTitle >> courseAttribute >> totalClassHour; 
+            ssLine >> teachingHours >> experimentHours >> credit >> courseSemester; 
+            vector<string> sElem{_courseNumber, courseTitle, courseAttribute}; 
+            vector<size_t> iElem{totalClassHour, teachingHours, experimentHours, credit, courseSemester}; 
+            _courseList.insert(make_pair(sElem, iElem)); 
+        }
+        // 根据username排序
+        // sort(_courseList.begin(), _courseList.end(), [](const vector<string> &lhs, const vector<string> &rhs) {
+        //     return lhs[0] < rhs[0]; 
+        // }); 
+        // 遍历带出
+        
+        for (map<vector<string>, vector<size_t> >::const_iterator iter = _courseList.cbegin(); iter != _courseList.cend(); ++iter) {
+            CCourse course; 
+            course.SetCourseNumber((*iter).first[0]); 
+            course.SetCourseTitle((*iter).first[1]); 
+            course.SetCourseAttribute((*iter).first[2]); 
+            course.SetTotalClassHours((*iter).second[0]); 
+            course.SetTeachingHours((*iter).second[1]); 
+            course.SetExperimentHours((*iter).second[2]); 
+            course.SetCredit((*iter).second[3]); 
+            course.SetCourseSemester((*iter).second[4]); 
+            courseList.push_back(course); 
+        }
+    } else {
+        CCourse course; 
+        // TODO: FindCourseByCourseNumber()
+        // FindTeacherByUsername(courseNumber, teacher); 
+        courseList.push_back(course); 
+    }
+
+    cout << courseList[0].GetCourseNumber() << " ";  
+    cout << courseList[0].GetCourseTitle() << " ";   
+    cout << courseList[0].GetCourseAttribute() << " ";   
+    cout << courseList[0].GetTotalClassHours() << " ";   
+    cout << courseList[0].GetTeachingHours() << " ";   
+    cout << courseList[0].GetExperimentHours() << " ";   
+    cout << courseList[0].GetCredit() << " ";   
+    cout << courseList[0].GetCourseSemester() << "\n"; 
+    
+    in.close(); 
+    return true; 
 }
 

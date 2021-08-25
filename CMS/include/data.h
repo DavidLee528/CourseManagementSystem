@@ -19,10 +19,13 @@ public:
 
     
 
-    // 通用接口
+    // 合法性检查
     static bool CheckPasswordValidity(const std::pair<std::string, std::string> &input); 
     static bool GetUserAuthorization(const std::pair<std::string, std::string> &user, int &authCode); 
     static bool CheckUsernameFormat(const string &username, const int authCode); 
+    static bool CheckCourseNumberFormat(const string &courseNumber); 
+
+    // 用户操作
     static bool SetPassword(const string &username, const string &newPassword);   
     static bool DelPassword(const string &username); 
     static bool IsUniqueUser(const string &username); 
@@ -42,8 +45,8 @@ public:
 
     static bool AddCourseData(const CCourse &course); 
     static bool DelCourseData(const string &courseNumber); 
-    static bool ModCourseData(const CStudent &course); 
-    static bool QueCourseData(); 
+    static bool ModCourseData(const CCourse &course); 
+    static bool QueCourseData(vector<CCourse> &courseList, const string &courseNumber = "$default$"); 
 
     // 给CStudent类使用的接口
     static bool SelectCourse(const vector<string> &courseList, const string &username); 

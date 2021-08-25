@@ -8,6 +8,7 @@
 #include "../include/admin.h"
 #include "../include/student.h"
 #include "../include/teacher.h"
+#include "../include/course.h"
 
 using std::cout; 
 using std::cin; 
@@ -100,6 +101,7 @@ bool CAdmin::ManageTeacher() {
             continue; 
         } else if (userOption == "4") {
             CAdmin::QueTeacher(); 
+            continue; 
         } else if (userOption == "0") {
             break; 
         } else {
@@ -110,24 +112,18 @@ bool CAdmin::ManageTeacher() {
     return true; 
 }
 
-/**
- * @description: 增加一位教师
- * @param {*} 
- * @return {*}
- */
 void CAdmin::AddTeacher() {
     CInterface::CMSPrompt("添加教师信息"); 
-    CTeacher teacher; 
-    cin >> teacher; 
-    if (CData::AddTeacherData(teacher)) CInterface::CMSPrompt("添加成功, 输入任意键以继续管理教师..."); 
+    CTeacher course; 
+    cin >> course; 
+    if (CData::AddTeacherData(course)) CInterface::CMSPrompt("添加成功, 输入任意键以继续管理教师..."); 
     else CInterface::CMSErrorReport("添加失败"); 
     CInterface::Flush(); 
     getchar(); 
 }
 
 void CAdmin::DelTeacher() {
-    CInterface::CMSPrompt("删除教师信息"); 
-    CInterface::CMSPrompt("请输入教工号"); 
+    CInterface::CMSPrompt("删除教师信息，请输入教工号"); 
     string str; 
     cin >> str; 
     if (CData::DelTeacherData(str)) CInterface::CMSPrompt("删除成功，输入任意键以继续管理教师..."); 
@@ -139,9 +135,9 @@ void CAdmin::DelTeacher() {
 void CAdmin::ModTeacher() {
     // 修改一位教师
     CInterface::CMSPrompt("修改教师信息"); 
-    CTeacher teacher; 
-    cin >> teacher; 
-    if (CData::ModTeacherData(teacher, teacher.GetTeacherUsername())) CInterface::CMSPrompt("修改成功，输入任意键以继续管理教师..."); 
+    CTeacher course; 
+    cin >> course; 
+    if (CData::ModTeacherData(course, course.GetTeacherUsername())) CInterface::CMSPrompt("修改成功，输入任意键以继续管理教师..."); 
     else CInterface::CMSErrorReport("删除失败"); 
     getchar(); 
 }
@@ -168,35 +164,23 @@ void CAdmin::QueTeacher() {
 //                                学生管理                                  //
 // ======================================================================= //
 
-bool CAdmin::ManageStudent(const string &option) {
-    if (option == "1") {
-        CAdmin::AddStudent(); 
-    } else if (option == "2") {
-        CAdmin::DelStudent(); 
-    } else if (option == "3") {
-        CAdmin::ModStudent(); 
-    } else if (option == "4") {
-        CAdmin::QueStudent(); 
-    } else {
-        return CInterface::CMSErrorReport("In function ManageStudent"); 
-    }
-    return true; 
+bool CAdmin::ManageStudent() {
+    // if (option == "1") {
+    //     CAdmin::AddStudent(); 
+    // } else if (option == "2") {
+    //     CAdmin::DelStudent(); 
+    // } else if (option == "3") {
+    //     CAdmin::ModStudent(); 
+    // } else if (option == "4") {
+    //     CAdmin::QueStudent(); 
+    // } else {
+    //     return CInterface::CMSErrorReport("In function ManageStudent"); 
+    // }
+    // return true; 
 }
 
 void CAdmin::AddStudent() {
-    CStudent student; 
-    string str; 
-    CInterface::CMSPrompt("添加学生信息"); 
-    cout << endl; 
-    cout << "教工号："; cin >> str; student.SetStudentUsername(str); 
-    cout << "密  码："; cin >> str; student.SetStudentPassword(str); 
-    cout << "姓  名："; cin >> str; student.SetStudentName(str); 
-    cout << "专  业："; cin >> str; student.SetStudentMajor(str); 
-    if (CData::AddStudentData(student)) CInterface::CMSPrompt("添加成功"); 
-    else CInterface::CMSPrompt("添加失败"); 
-    CInterface::Flush(); 
-    getchar(); 
-    CInterface::Flush(); 
+    // 添加一名学生
 }
 
 void CAdmin::DelStudent() {
@@ -218,5 +202,85 @@ void CAdmin::QueStudent() {
 // ======================================================================= //
 
 
+bool CAdmin::ManageCourse() {
+    
+    while (1) {
+        string userOption; 
+        CAdmin::ShowOptionsLv2_3(); 
+        CInterface::GetOption("Please select", userOption); 
+        if (userOption == "1") {
+            CAdmin::AddCourse(); 
+            continue; 
+        } else if (userOption == "2") {
+            CAdmin::DelCourse(); 
+            continue; 
+        } else if (userOption == "3") {
+            CAdmin::ModCourse(); 
+            continue; 
+        } else if (userOption == "4") {
+            CAdmin::QueCourse(); 
+            continue; 
+        } else if (userOption == "0") {
+            break; 
+        } else {
+            return CInterface::CMSErrorReport("In function ManageCourse"); 
+        }
+    }
+    
+    return true; 
+}
 
+void CAdmin::AddCourse() {
+    CInterface::CMSPrompt("添加课程信息"); 
+    CCourse course; 
+    cin >> course; 
+    if (CData::AddCourseData(course)) CInterface::CMSPrompt("添加成功, 输入任意键以继续管理课程..."); 
+    else CInterface::CMSErrorReport("添加失败"); 
+    CInterface::Flush(); 
+    getchar(); 
+}
+
+void CAdmin::DelCourse() {
+    CInterface::CMSPrompt("删除课程信息，请输入课程编号"); 
+    string str; 
+    cin >> str; 
+    if (CData::DelCourseData(str)) CInterface::CMSPrompt("删除成功，输入任意键以继续管理课程..."); 
+    else CInterface::CMSErrorReport("删除失败"); 
+    CInterface::Flush(); 
+    getchar(); 
+}
+
+void CAdmin::ModCourse() {
+    // 修改一位教师
+    CInterface::CMSPrompt("修改课程信息"); 
+    CCourse course; 
+    cin >> course; 
+    if (CData::ModCourseData(course)) CInterface::CMSPrompt("修改成功，输入任意键以继续管理课程..."); 
+    else CInterface::CMSErrorReport("删除失败"); 
+    getchar(); 
+}
+
+void CAdmin::QueCourse() {
+    CInterface::CMSPrompt("查询课程信息, 请输入课程编号(输入#以查询全部课程)"); 
+    string str; cin >> str; 
+    vector<CCourse> courseList; 
+    if (str == "#") CData::QueCourseData(courseList); 
+    else CData::QueCourseData(courseList, str); 
+    // 打印
+    cout << endl; 
+    for (vector<CCourse>::const_iterator iter = courseList.cbegin(); iter != courseList.cend(); ++iter) {
+        cout << (*iter).GetCourseNumber() << " ";  
+        cout << (*iter).GetCourseTitle() << " ";   
+        cout << (*iter).GetCourseAttribute() << " ";   
+        cout << (*iter).GetTotalClassHours() << " ";   
+        cout << (*iter).GetTeachingHours() << " ";   
+        cout << (*iter).GetExperimentHours() << " ";   
+        cout << (*iter).GetCredit() << " ";   
+        cout << (*iter).GetCourseSemester() << "\n";  
+    }
+    cout << endl; 
+    CInterface::CMSPrompt("输入任意键以继续管理课程..."); 
+    CInterface::Flush(); 
+    getchar(); 
+}
 

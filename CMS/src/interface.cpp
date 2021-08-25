@@ -2,6 +2,7 @@
 #include <string>
 #include <utility>
 #include <ctime>
+#include <execinfo.h>
 
 #include "../include/CMS.h"
 #include "../include/interface.h"
@@ -20,6 +21,7 @@
 using std::cin; 
 using std::cout; 
 using std::endl; 
+using std::cerr; 
 using std::string; 
 
 /**
@@ -29,7 +31,14 @@ using std::string;
  */
 bool CInterface::CMSErrorReport(const std::string &msg) {
 
+    
     std::cerr << msg << endl; 
+    
+    // int j, nptrs; 
+    // void *buffer[100]; 
+    // char **strings; 
+    // nptrs = backtrace(buffer, 100); 
+    // printf(RED "[ CMS ERROR ]" NONE "backtrace() returned %d addresses\n", nptrs); 
 
     return false; 
 }
@@ -94,7 +103,7 @@ bool CInterface::UserInfoInput(std::string &username, std::string &password) {
     cout << "Username: "; 
     cin >> username; 
     #ifdef _WIN32
-        WindowGetPass("Password: ", password)
+        WindowsGetPass("Password: ", password)
     #else
         password = getpass("Password: "); 
     #endif
@@ -119,7 +128,6 @@ bool CInterface::InitScreen() {
 
 
 void CInterface::aMain(CAdmin &admin) {
-    
     while (1) {
         // 用户选项初始化
         string userOption1 = "#"; 
@@ -132,17 +140,11 @@ void CInterface::aMain(CAdmin &admin) {
             continue; 
         } else if (userOption1 == "2") {
             // 管理学生
-            CAdmin::ShowOptionsLv2_2(); 
-            CInterface::GetOption("Please select", userOption2); 
-            if (userOption2 == "0") continue; 
-            // CAdmin::ManageStudent(userOption2); 
+            // CAdmin::ManageStudent(); 
             continue; 
         } else if (userOption1 == "3") {
             // 管理课程
-            CAdmin::ShowOptionsLv2_3(); 
-            CInterface::GetOption("Please select", userOption2); 
-            if (userOption2 == "0") continue; 
-            // CAdmin::ManageCourse(userOption2); 
+            CAdmin::ManageCourse(); 
             continue; 
         } else if (userOption1 == "0") {
             // 退出系统
@@ -156,7 +158,6 @@ void CInterface::aMain(CAdmin &admin) {
         }   
         break;   
     }
-
 }
 
 void CInterface::sMain(CStudent &student) {
@@ -164,7 +165,42 @@ void CInterface::sMain(CStudent &student) {
 }
 
 void CInterface::tMain(CTeacher &teacher) {
-    
+    // while (1) {
+    //     // 用户选项初始化
+    //     string userOption1 = "#"; 
+    //     string userOption2 = "#"; 
+    //     CAdmin::ShowOptionsLv1(); 
+    //     CInterface::GetOption("Please select", userOption1); 
+    //     if (userOption1 == "1") {
+    //         // 管理教师
+    //         CAdmin::ManageCours(); 
+    //         continue; 
+    //     } else if (userOption1 == "2") {
+    //         // 管理学生
+    //         CAdmin::ShowOptionsLv2_2(); 
+    //         CInterface::GetOption("Please select", userOption2); 
+    //         if (userOption2 == "0") continue; 
+    //         // CAdmin::ManageStudent(userOption2); 
+    //         continue; 
+    //     } else if (userOption1 == "3") {
+    //         // 管理课程
+    //         CAdmin::ShowOptionsLv2_3(); 
+    //         CInterface::GetOption("Please select", userOption2); 
+    //         if (userOption2 == "0") continue; 
+    //         // CAdmin::ManageCourse(userOption2); 
+    //         continue; 
+    //     } else if (userOption1 == "0") {
+    //         // 退出系统
+    //         CInterface::Flush(); 
+    //         CMSPrompt("Press any key to exit..."); 
+    //         getchar(); 
+    //         return ; 
+    //     } else {
+    //         cout << "_default" << endl; 
+    //         continue; 
+    //     }   
+    //     break;   
+    // }
 }
 
 void CInterface::GetOption(const string &prompt, string& option) {
@@ -182,7 +218,7 @@ string & CInterface::WindowsGetPass(const std::string prompt, std::string& _pass
     int index = 0;
     char password[50];
 
-    cout << "Password: " << endl;
+    cout << "Password: ";
     while ((ch = _getch()) != '\r') {
         if (ch != '\b') {
             printf("*");

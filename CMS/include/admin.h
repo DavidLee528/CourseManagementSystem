@@ -1,9 +1,3 @@
-/*
- * @ Author: 李天昊
- * @ Description: 
- * @ Date: 
- * @ E-mail: 13121515269@163.com
- */
 #ifndef _ADMIN_H
 #define _ADMIN_H
 
@@ -27,9 +21,9 @@ public:
     static void ShowOptionsLv2_2(); 
     static void ShowOptionsLv2_3(); 
 
-    static bool ManageTeacher();     // 1
-    static bool ManageStudent(const string &option);     // 2
-    static bool ManageCourse(const string &option);      // 3
+    static bool ManageTeacher();                        // 1
+    static bool ManageStudent();                        // 2
+    static bool ManageCourse();                         // 3
     
     static void AddTeacher();                           // 1-1
     static void DelTeacher();                           // 1-2

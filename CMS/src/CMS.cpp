@@ -6,7 +6,7 @@
 
 int main(int argc, char **argv) {
 
-    if (!CInterface::Login()) return 0; 
+    if (!CInterface::Login()) return 0;
 
     return 0; 
 }
