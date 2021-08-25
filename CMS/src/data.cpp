@@ -91,9 +91,39 @@ bool CData::GetUserAuthorization(const pair<string, string> &user, int &authCode
  * @param {string} &username 用户名
  * @return {*} 为真则成功
  */
-bool CData::SetPassword(const string &username, const string &newPassword) {
+bool CData::SetPassword(const string& username, const string& newPassword){
+    // 打开user.dat文件
+    ifstream user_data(PSWD_FILE_PATH, ifstream::in);
+    if (!user_data.is_open()) return CInterface::CMSErrorReport("Cannot open file");
+
+    // 读取user.dat文件
+    // 使用关联容器unordered_map存储信息
+    string line, _username, _password;
+    unordered_map <string, string> userlist;
+    while (getline(user_data, line)) {
+        stringstream ssLine(line);
+        ssLine >> _username >> _password;
+        userlist.insert(make_pair(_username, _password));
+    }
+    // 得到迭代器
+    unordered_map<string, string>::iterator iter = userlist.find(username);
+
+    // 修改
+    iter->second = newPassword;
+
+    // 关闭后打开并清空文件内容
+    user_data.close();
+    ofstream outfile;
+    outfile.open(PSWD_FILE_PATH, ofstream::out | ofstream::trunc);
 
 
+    // 写入修改后的内容
+    for (iter = userlist.begin(); iter != userlist.end(); iter++) {
+        outfile << iter->first << " " << iter->second << endl;
+    }
+
+    outfile.close();
+    return true;
 }
 
 /**
@@ -103,15 +133,25 @@ bool CData::SetPassword(const string &username, const string &newPassword) {
  * @return {*} 为真则成功
  */
 bool CData::FindTeacherByUsername(const string &username, CTeacher &teacher) {
-
+	int flag = 0;
     ifstream teacher_data(TEACHER_FILE_PATH, ios::in); 
-    if (!teacher_data.is_open()) return CInterface::CMSErrorReport("Cannot open file."); 
-
-    // TODO:
-    // 若查找失败则函数返回值false
-    // 文件数据样例已经保存在teacher.dat中
-    // 
-
+    if (!teacher_data.is_open()) return CInterface::CMSErrorReport("Cannot open file"); 
+    
+    string line, _username, _name, _major;
+    while (getline(teacher_data, line)) {
+        stringstream ssLine(line);
+        ssLine >> _username >> _name >> _major;
+        
+        if (username == _username){
+	   	    teacher.SetTeacherUsername(_username);
+	    	teacher.SetTeacherName(_name);
+	    	teacher.SetTeacherMajor(_major);
+	    	flag = 1;
+	    	break;
+		}
+	}
+	if(flag == 0)return false;
+	
     teacher_data.close(); 
     return true; 
 }
@@ -123,15 +163,26 @@ bool CData::FindTeacherByUsername(const string &username, CTeacher &teacher) {
  * @return {*} 为真则成功
  */
 bool CData::FindStudentByUsername(const string &username, CStudent &student) {
-
+    
+	int flag = 0;
     ifstream student_data(STUDENT_FILE_PATH, ios::in); 
     if (!student_data.is_open()) return CInterface::CMSErrorReport("Cannot open file"); 
-
-    // TODO:
-    // 若查找失败则函数返回值false
-    // 文件数据样例已经保存在student.dat中
-    // 
-
+    
+    string line, _username, _name, _major;
+    while (getline(student_data, line)) {
+        stringstream ssLine(line);
+        ssLine >> _username >> _name >> _major;
+        
+        if (username == _username){
+	   	    student.SetStudentUsername(_username);
+	    	student.SetStudentName(_name);
+	    	student.SetStudentMajor(_major);
+	    	flag = 1;
+	    	break;
+		}
+	}
+	if(flag == 0)return false;
+	
     student_data.close(); 
     return true; 
 }
