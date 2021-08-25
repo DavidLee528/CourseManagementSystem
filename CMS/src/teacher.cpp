@@ -1,10 +1,14 @@
 #include <iostream>
+#include <string>
 
-#include "teacher.h"
+#include "../include/CMS.h"
+#include "../include/teacher.h"
 
 using std::cout; 
 using std::endl; 
 using std::string; 
+using std::istream; 
+using std::ostream; 
 
 CTeacher::CTeacher() {
 
@@ -37,6 +41,35 @@ CTeacher& CTeacher::operator=(const CTeacher &rhs) {
     return *this; 
 }
 
+ostream& operator<<(ostream &os, const CTeacher &t) {
+    os << GREEN << " [*] " << NONE; 
+    os << "教工号:" << t.username;
+    os << "  姓名:" << t.name; 
+    os << "  专业:" << t.major; 
+    os << endl; 
+    return os; 
+}
+
+istream& operator>>(istream &is, CTeacher &t) {
+    string str;
+    cout << "教工号："; is >> str; t.SetTeacherUsername(str); 
+    cout << "密  码："; is >> str; t.SetTeacherPassword(str); 
+    cout << "姓  名："; is >> str; t.SetTeacherName(str); 
+    cout << "专  业："; is >> str; t.SetTeacherMajor(str); 
+    return is; 
+}   
+
+const string & CTeacher::GetTeacherUsername() const {
+    return username; 
+}
+
+const string & CTeacher::GetTeacherName() const {
+    return name; 
+}
+
+const string & CTeacher::GetTeacherMajor() const {
+    return major; 
+}
 
 void CTeacher::SetTeacherUsername(const string &rhs) {
     username = rhs; 

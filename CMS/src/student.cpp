@@ -1,11 +1,15 @@
 #include <iostream>
 #include <string>
 
-#include "student.h"
+#include "../include/student.h"
 
 using std::cout; 
 using std::endl; 
 using std::string; 
+
+CStudent::CStudent() {
+    
+}
 
 CStudent::CStudent(const string &_username): username(_username) { 
 
@@ -32,3 +36,20 @@ string & CStudent::GetStudentName() {
 string & CStudent::GetStudentMajor() {
     return major; 
 }
+
+void CStudent::SetStudentUsername(const string &rhs) {
+    username = rhs; 
+}
+
+void CStudent::SetStudentPassword(const string &rhs) {
+    password = rhs; 
+}
+
+void CStudent::SetStudentName(const string &rhs) {
+    name = rhs; 
+}
+
+void CStudent::SetStudentMajor(const string &rhs) {
+    major = rhs; 
+}
+

@@ -2,10 +2,12 @@
 #define _TEACHER_H
 
 using std::string; 
+using std::istream; 
+using std::ostream; 
 
 class CTeacher {
 
-private: 
+protected: 
     string username; 
     string password; 
     string name; 
@@ -18,12 +20,14 @@ public:
     ~CTeacher(); 
 
     CTeacher& operator=(const CTeacher &rhs); 
+    friend ostream& operator<<(ostream &os, const CTeacher &t); 
+    friend istream& operator>>(istream &is, CTeacher &t); 
 
 public: 
     
-    string & GetTeacherUsername() const; 
-    string & GetTeacherName() const; 
-    string & GetTeacherMajor() const; 
+    const string & GetTeacherUsername() const; 
+    const string & GetTeacherName() const; 
+    const string & GetTeacherMajor() const; 
 
     void SetTeacherUsername(const string &rhs); 
     void SetTeacherPassword(const string &rhs); 
@@ -31,7 +35,7 @@ public:
     void SetTeacherMajor(const string &rhs); 
 
     
-
+    friend class CData; 
 
 
 }; 

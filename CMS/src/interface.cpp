@@ -1,18 +1,13 @@
 #include <iostream>
 #include <string>
 #include <utility>
-<<<<<<< HEAD
-#include <ctime>
-=======
-#include <conio.h>
->>>>>>> cfb5b9eda6a20f52b20ad71e2177e0c28def9cbe
 
-#include "CMS.h"
-#include "interface.h"
-#include "data.h"
-#include "admin.h"
-#include "student.h"
-#include "teacher.h"
+#include "../include/CMS.h"
+#include "../include/interface.h"
+#include "../include/data.h"
+#include "../include/admin.h"
+#include "../include/student.h"
+#include "../include/teacher.h"
 
 #ifdef _WIN32
 #include <conio.h>
@@ -97,15 +92,11 @@ bool CInterface::Login() {
 bool CInterface::UserInfoInput(std::string &username, std::string &password) {
     cout << "Username: "; 
     cin >> username; 
-<<<<<<< HEAD
     #ifdef _WIN32
         WindowGetPass("Password: ", password)
     #else
         password = getpass("Password: "); 
     #endif
-=======
-    WindowsGetPass("Password: ", password);
->>>>>>> cfb5b9eda6a20f52b20ad71e2177e0c28def9cbe
     return true; 
 }
 
@@ -128,8 +119,8 @@ bool CInterface::InitScreen() {
 
 void CInterface::aMain(CAdmin &admin) {
     
-    
     while (1) {
+        // 用户选项初始化
         string userOption1 = "#"; 
         string userOption2 = "#"; 
         CAdmin::ShowOptionsLv1(); 
@@ -143,13 +134,15 @@ void CInterface::aMain(CAdmin &admin) {
         } else if (userOption1 == "2") {
             // 管理学生
             CAdmin::ShowOptionsLv2_2(); 
-
-
+            CInterface::GetOption("Please select", userOption2); 
+            if (userOption2 == "0") continue; 
+            // CAdmin::ManageStudent(userOption2); 
         } else if (userOption1 == "3") {
             // 管理课程
             CAdmin::ShowOptionsLv2_3(); 
-
-
+            CInterface::GetOption("Please select", userOption2); 
+            if (userOption2 == "0") continue; 
+            // CAdmin::ManageCourse(userOption2); 
         } else if (userOption1 == "0") {
             // 退出系统
             CInterface::Flush(); 
@@ -179,16 +172,12 @@ void CInterface::GetOption(const string &prompt, string& option) {
     cin >> option; 
 }
 
-<<<<<<< HEAD
 void CInterface::CMSPrompt(const string &prompt) {
     cout << GREEN << SOFTWARE_TITLE << NONE << BLUE << prompt << NONE << "  "; 
 }
 
 #ifdef _WIN32
 string & CInterface::WindowsGetPass(const std::string prompt, std::string& _password) {
-=======
-std::string& CInterface::WindowsGetPass(const std::string prompt, std::string& Password) {
->>>>>>> cfb5b9eda6a20f52b20ad71e2177e0c28def9cbe
     char ch;
     int index = 0;
     char password[50];
@@ -206,7 +195,6 @@ std::string& CInterface::WindowsGetPass(const std::string prompt, std::string& P
     }
     password[index] = '\0';
 
-<<<<<<< HEAD
     _password = password;
 }
 #endif
@@ -231,7 +219,4 @@ string & CInterface::GetDate() {
     // TODO: 获取当前日期
     // 
     
-=======
-    Password = password;
->>>>>>> cfb5b9eda6a20f52b20ad71e2177e0c28def9cbe
 }

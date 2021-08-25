@@ -6,12 +6,13 @@
 #include <vector>
 
 
-#include "CMS.h"
-#include "interface.h"
-#include "data.h"
-#include "teacher.h"
-#include "student.h"
-#include "admin.h"
+#include "../include/CMS.h"
+#include "../include/interface.h"
+#include "../include/data.h"
+#include "../include/teacher.h"
+#include "../include/student.h"
+#include "../include/admin.h"
+#include "../include/course.h"
 
 using std::ios; 
 using std::ifstream; 
@@ -24,6 +25,7 @@ using std::pair;
 using std::make_pair; 
 using std::cout; 
 using std::endl; 
+using std::vector; 
 
 /**
  * @description: 此函数读取user.txt文件，验证密码有效性
@@ -91,10 +93,47 @@ bool CData::GetUserAuthorization(const pair<string, string> &user, int &authCode
  */
 bool CData::SetPassword(const string &username, const string &newPassword) {
 
-    // 读方式打开二进制文件
-    ifstream user_data(PSWD_FILE_PATH, ios::in|ios::binary); 
 
+}
 
+/**
+ * @description: 从文件中查找教师
+ * @param {string} &username 教工号
+ * @param {CTeacher} &teacher
+ * @return {*} 为真则成功
+ */
+bool CData::FindTeacherByUsername(const string &username, CTeacher &teacher) {
+
+    ifstream teacher_data(TEACHER_FILE_PATH, ios::in); 
+    if (!teacher_data.is_open()) return CInterface::CMSErrorReport("Cannot open file."); 
+
+    // TODO:
+    // 若查找失败则函数返回值false
+    // 文件数据样例已经保存在teacher.dat中
+    // 
+
+    teacher_data.close(); 
+    return true; 
+}
+
+/**
+ * @description: 从文件中查找学生
+ * @param {string} &username 学号
+ * @param {CStudent} &student
+ * @return {*} 为真则成功
+ */
+bool CData::FindStudentByUsername(const string &username, CStudent &student) {
+
+    ifstream student_data(STUDENT_FILE_PATH, ios::in); 
+    if (!student_data.is_open()) return CInterface::CMSErrorReport("Cannot open file"); 
+
+    // TODO:
+    // 若查找失败则函数返回值false
+    // 文件数据样例已经保存在student.dat中
+    // 
+
+    student_data.close(); 
+    return true; 
 }
 
 /**
@@ -105,14 +144,53 @@ bool CData::SetPassword(const string &username, const string &newPassword) {
  */
 bool CData::AddTeacherData(const CTeacher &teacher) {
 
-    // 写方式打开二进制文件
-    fstream out(TEACHER_FILE_PATH, ios::app|ios::binary); 
+    ofstream out(TEACHER_FILE_PATH, ios::app); 
     if (!out.is_open()) return CInterface::CMSErrorReport("Cannot open file."); 
 
+    out << teacher.GetTeacherUsername() << " "; 
+    out << teacher.GetTeacherName() << " "; 
+    out << teacher.GetTeacherMajor() << " "; 
+    out << endl << endl; 
 
-    out.write((char*)&teacher, sizeof(teacher)); 
+    // SetPassword(teacher.GetTeacherUsername(), teacher.password); 
 
     out.close(); 
     return true; 
+}
+
+/**
+ * @description: 向文件以二进制读取教师信息
+ *               若没有指定username，则查询所有教师信息
+ * @param {*}
+ * @return {*}
+ */
+bool CData::QueTeacherData(vector<CTeacher> &teacherList, const string &username) {
+
+    ifstream in(TEACHER_FILE_PATH, ios::in); 
+    if (!in.is_open()) return CInterface::CMSErrorReport("Cannot open file."); 
+
+    if (username == "$default$") {
+        
+    } else {
+        CTeacher teacher; 
+        FindByUsername(); 
+        cout << teacher << endl; 
+    }
+    
+    
+    
+
+    in.close(); 
+    return true; 
+}
+
+/**
+ * @description: 向文件以二进制写入一个学生信息
+ *               需要检查学生是否重复
+ * @param {CStudent} &student CStudent类对象
+ * @return {*} 为真则成功
+ */
+bool CData::AddStudentData(const CStudent &student) {
+
 }
 

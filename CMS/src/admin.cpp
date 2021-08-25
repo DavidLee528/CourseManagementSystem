@@ -1,15 +1,19 @@
 #include <iostream>
 #include <string>
+#include <vector>
 
-#include "CMS.h"
-#include "data.h"
-#include "interface.h"
-#include "admin.h"
+#include "../include/CMS.h"
+#include "../include/data.h"
+#include "../include/interface.h"
+#include "../include/admin.h"
+#include "../include/student.h"
+#include "../include/teacher.h"
 
 using std::cout; 
 using std::cin; 
 using std::endl; 
 using std::string; 
+using std::vector; 
 
 CAdmin::CAdmin(const string &_username): username(_username) {
 
@@ -66,6 +70,10 @@ void CAdmin::ShowOptionsLv2_3() {
     cout << "[0] 返回上一级" << endl << endl; 
 }
 
+// ======================================================================= //
+//                                教师管理                                  //
+// ======================================================================= //
+
 
 bool CAdmin::ManageTeacher(const string &option) {
     if (option == "1") {
@@ -79,6 +87,7 @@ bool CAdmin::ManageTeacher(const string &option) {
     } else {
         return CInterface::CMSErrorReport("In function ManageTeacher"); 
     }
+    return true; 
 }
 
 /**
@@ -87,14 +96,10 @@ bool CAdmin::ManageTeacher(const string &option) {
  * @return {*}
  */
 void CAdmin::AddTeacher() {
-    CTeacher teacher; 
-    string str; 
     CInterface::CMSPrompt("添加教师信息"); 
     cout << endl; 
-    cout << "教工号："; cin >> str; teacher.SetTeacherUsername(str); 
-    cout << "密  码："; cin >> str; teacher.SetTeacherPassword(str); 
-    cout << "姓  名："; cin >> str; teacher.SetTeacherName(str); 
-    cout << "专  业："; cin >> str; teacher.SetTeacherMajor(str); 
+    CTeacher teacher; 
+    cin >> teacher; 
     if (CData::AddTeacherData(teacher)) CInterface::CMSPrompt("添加成功"); 
     else CInterface::CMSPrompt("添加失败"); 
 }
@@ -108,5 +113,72 @@ void CAdmin::ModTeacher() {
 }
 
 void CAdmin::QueTeacher() {
-    // 查询所有教师信息
+    CInterface::CMSPrompt("查询教师信息"); 
+    CInterface::CMSPrompt("请输入教工号(输入#以查询全部教师)"); 
+    string str; cin >> str; 
+    vector<CTeacher> teacherList; 
+    if (str == "#") CData::QueTeacherData(teacherList); 
+    else CData::QueTeacherData(teacherList, str); 
+
+    return ;
+    for (vector<CTeacher>::const_iterator iter = teacherList.cbegin(); iter != teacherList.cend(); ++iter) {
+        // cout << (*iter) << endl; 
+        (*iter).GetTeacherUsername(); 
+    }
+
 }
+
+
+// ======================================================================= //
+//                                学生管理                                  //
+// ======================================================================= //
+
+bool CAdmin::ManageStudent(const string &option) {
+    if (option == "1") {
+        CAdmin::AddStudent(); 
+    } else if (option == "2") {
+        CAdmin::DelStudent(); 
+    } else if (option == "3") {
+        CAdmin::ModStudent(); 
+    } else if (option == "4") {
+        CAdmin::QueStudent(); 
+    } else {
+        return CInterface::CMSErrorReport("In function ManageStudent"); 
+    }
+    return true; 
+}
+
+void CAdmin::AddStudent() {
+    CStudent student; 
+    string str; 
+    CInterface::CMSPrompt("添加学生信息"); 
+    cout << endl; 
+    cout << "教工号："; cin >> str; student.SetStudentUsername(str); 
+    cout << "密  码："; cin >> str; student.SetStudentPassword(str); 
+    cout << "姓  名："; cin >> str; student.SetStudentName(str); 
+    cout << "专  业："; cin >> str; student.SetStudentMajor(str); 
+    if (CData::AddStudentData(student)) CInterface::CMSPrompt("添加成功"); 
+    else CInterface::CMSPrompt("添加失败"); 
+}
+
+void CAdmin::DelStudent() {
+    // 删除一名学生
+}
+
+void CAdmin::ModStudent() {
+    // 修改一名学生
+}
+
+void CAdmin::QueStudent() {
+    // 查询所有学生信息
+}
+
+
+
+// ======================================================================= //
+//                                课程管理                                  //
+// ======================================================================= //
+
+
+
+
