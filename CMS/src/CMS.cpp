@@ -1,10 +1,3 @@
-/*
- * @ Author: 李天昊
- * @ Description: 
- * @ Date: 
- * @ E-mail: 13121515269@163.com
- */
-#define NDEBUG
 #include <iostream>
 
 #include "../include/CMS.h"

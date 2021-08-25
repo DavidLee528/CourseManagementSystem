@@ -135,26 +135,23 @@ bool CData::SetPassword(const string& username, const string& newPassword){
     }
 
     // 得到迭代器
-    unordered_map<string, string>::iterator iter = userlist.find(username); 
+    unordered_map<string, string>::iterator pos = userlist.find(username); 
 
-    // 用户不存在
-    // 增加一条用户记录
-    if (iter == userlist.end()) {
+    // 若用户不存在, 增加一条用户记录
+    // 若用户存在, 修改用户密码
+    if (pos == userlist.end()) {
         userlist.insert(make_pair(username, newPassword)); 
-        return true; 
+    } else {
+        (*pos).second = newPassword;
     }
-
-    // 修改
-    iter->second = newPassword;
 
     // 关闭后打开并清空文件内容
     user_data.close();
-    ofstream outfile;
-    outfile.open(PSWD_FILE_PATH, ofstream::out | ofstream::trunc);
-
+    ofstream outfile(PSWD_FILE_PATH, ofstream::out | ofstream::trunc);
+    
     // 写入修改后的内容
-    for (iter = userlist.begin(); iter != userlist.end(); iter++) {
-        outfile << iter->first << " " << iter->second << endl;
+    for (unordered_map<string, string>::const_iterator iter = userlist.cbegin(); iter != userlist.cend(); ++iter) {
+        outfile << (*iter).first << " " << (*iter).second << "\n"; 
     }
 
     outfile.close();
@@ -256,8 +253,8 @@ bool CData::FindStudentByUsername(const string &username, CStudent &student) {
 bool CData::AddTeacherData(const CTeacher &teacher) {
 
     // 初始化文件
-    ofstream out(TEACHER_FILE_PATH, ios::app); 
-    if (!out.is_open()) return CInterface::CMSErrorReport("Cannot open file."); 
+    ofstream teacherData(TEACHER_FILE_PATH, ios::app); 
+    if (!teacherData.is_open()) return CInterface::CMSErrorReport("Cannot open file."); 
 
     // 检查是否重复添加
     CTeacher t; 
@@ -265,19 +262,18 @@ bool CData::AddTeacherData(const CTeacher &teacher) {
         return CInterface::CMSErrorReport("Teacher exist."); 
     
     // 检查用户名格式合法性
-    if (!CData::CheckUsernameFormat(teacher.GetTeacherUsername())) 
+    if (!CData::CheckUsernameFormat(teacher.GetTeacherUsername(), TEACHER_AUTH_CODE)) 
         return CInterface::CMSErrorReport("Wrong username format"); 
 
     // 向teacher.dat增加一条教师信息
-    out << teacher.GetTeacherUsername() << " "; 
-    out << teacher.GetTeacherName() << " "; 
-    out << teacher.GetTeacherMajor() << " "; 
-    out << endl << endl; 
+    teacherData << teacher.GetTeacherUsername() << " "; 
+    teacherData << teacher.GetTeacherName() << " "; 
+    teacherData << teacher.GetTeacherMajor() << "\n"; 
 
     // 向user.dat增加一条用户记录
     SetPassword(teacher.GetTeacherUsername(), teacher.password); 
 
-    out.close(); 
+    teacherData.close(); 
     return true; 
 }
 
@@ -288,24 +284,26 @@ bool CData::AddTeacherData(const CTeacher &teacher) {
  */
 bool CData::DelTeacherData(const string &username) {
 
+    // 初始化
     ifstream teacherData(TEACHER_FILE_PATH, ios::in); 
     if (!teacherData.is_open()) return CInterface::CMSErrorReport("Cannot open file."); 
     
-    // 读取user.dat文件
+    // 读取teacher.dat文件
     // 使用关联容器unordered_map存储信息
-    string line, _username, password; 
-    unordered_map<string, string> teacherList; 
+    vector<string> elem; 
+    vector<vector<string> > teacherList; 
+    string line, _username, password, name, major; 
     while (getline(teacherData, line)) {
         stringstream ssLine(line); 
-        ssLine >> _username >> password; 
-        teacherList.insert(make_pair(username, password)); 
-    }
-
-    // 生成新的关联容器
-    // 除了待删除用户外, 其余用户拷贝到新的关联容器中
-    unordered_map<string, string> newTeacherList; 
-    for (unordered_map<string, string>::const_iterator iter = teacherList.cbegin(); iter != teacherList.cend(); ++iter) {
-        if ((*iter).first != username) newTeacherList.insert(make_pair((*iter).first, (*iter).second)); 
+        ssLine >> _username >> password >> name >> major; 
+        // 跳过待删除用户
+        if (username == _username) continue; 
+        elem.clear(); 
+        elem.push_back(_username); 
+        elem.push_back(name); 
+        elem.push_back(major); 
+        teacherList.push_back(elem); 
+        CData::DelPassword(username); 
     }
 
     teacherData.close(); 
@@ -315,8 +313,58 @@ bool CData::DelTeacherData(const string &username) {
     if (!newTeacherData.is_open()) return CInterface::CMSErrorReport("Cannot open file."); 
     
     // 向文件写入内容
-    for (unordered_map<string, string>::const_iterator iter = newTeacherList.cbegin(); iter != newTeacherList.cend(); ++iter) {
-        newTeacherData << (*iter).first << " " << (*iter).second << endl; 
+    for (vector<vector<string> >::const_iterator iter = teacherList.cbegin(); iter != teacherList.cend(); ++iter) {
+        newTeacherData << (*iter)[0] << " " << (*iter)[1] << " " << (*iter)[2] << "\n"; 
+    }
+
+    newTeacherData.close(); 
+    return true; 
+}
+
+/**
+ * @description: 修改教师信息
+ * @param {CTeacher} &teacher
+ * @param {string} &username
+ * @return {*} 为真则修改成功
+ */
+bool CData::ModTeacherData(const CTeacher &teacher, const string &username) {
+
+    // 初始化
+    ifstream teacherData(TEACHER_FILE_PATH, ios::in); 
+    if (!teacherData.is_open()) return CInterface::CMSErrorReport("Cannot open file."); 
+    
+    // 读取teacher.dat文件
+    // 使用关联容器unordered_map存储信息
+    vector<string> elem; 
+    vector<vector<string> > teacherList; 
+    string line, _username, password, name, major; 
+    while (getline(teacherData, line)) {
+        stringstream ssLine(line); 
+        ssLine >> _username >> password >> name >> major; 
+        // 修改用户信息
+        if (username == _username) {
+            _username = teacher.username; 
+            password = teacher.password; 
+            name = teacher.name; 
+            major = teacher.major; 
+        }
+        elem.clear(); 
+        elem.push_back(_username); 
+        elem.push_back(name); 
+        elem.push_back(major); 
+        teacherList.push_back(elem); 
+        CData::SetPassword(username, password); 
+    }
+
+    teacherData.close(); 
+
+    // 清空文件内容
+    ofstream newTeacherData(TEACHER_FILE_PATH, ios::out | ios::trunc); 
+    if (!newTeacherData.is_open()) return CInterface::CMSErrorReport("Cannot open file."); 
+    
+    // 向文件写入内容
+    for (vector<vector<string> >::const_iterator iter = teacherList.cbegin(); iter != teacherList.cend(); ++iter) {
+        newTeacherData << (*iter)[0] << " " << (*iter)[1] << " " << (*iter)[2] << "\n"; 
     }
 
     newTeacherData.close(); 

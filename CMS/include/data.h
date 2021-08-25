@@ -32,7 +32,7 @@ public:
     // 给CAdmin类提供的接口 (部分可给CTeacher类提供)
     static bool AddTeacherData(const CTeacher &teacher); 
     static bool DelTeacherData(const string &username); 
-    static bool ModTeacherData(const CTeacher &teacher); 
+    static bool ModTeacherData(const CTeacher &teacher, const string &username); 
     static bool QueTeacherData(vector<CTeacher> &teacherList, const string &username = "$default$"); 
 
     static bool AddStudentData(const CStudent &student); 

@@ -28,7 +28,9 @@ CAdmin::~CAdmin() {
 }
 
 void CAdmin::ShowOptionsLv1() {
+    #ifndef DEBUG 
     system("clear"); 
+    #endif
     CInterface::CMSPrompt("你好, admin!"); 
     cout << endl << endl; 
     cout << " [1] 教师管理" << endl; 
@@ -38,7 +40,9 @@ void CAdmin::ShowOptionsLv1() {
 }
 
 void CAdmin::ShowOptionsLv2_1() {
+    #ifndef DEBUG 
     system("clear"); 
+    #endif
     CInterface::CMSPrompt("你好, admin!"); 
     cout << endl << endl; 
     cout << "[1] 增加教师" << endl; 
@@ -49,7 +53,9 @@ void CAdmin::ShowOptionsLv2_1() {
 }
 
 void CAdmin::ShowOptionsLv2_2() {
+    #ifndef DEBUG 
     system("clear"); 
+    #endif
     CInterface::CMSPrompt("你好, admin!"); 
     cout << endl << endl; 
     cout << "[1] 增加学生" << endl; 
@@ -60,7 +66,9 @@ void CAdmin::ShowOptionsLv2_2() {
 }
 
 void CAdmin::ShowOptionsLv2_3() {
+    #ifndef DEBUG 
     system("clear"); 
+    #endif
     CInterface::CMSPrompt("你好, admin!"); 
     cout << endl << endl; 
     cout << "[1] 增加课程" << endl; 
@@ -92,7 +100,6 @@ bool CAdmin::ManageTeacher() {
             continue; 
         } else if (userOption == "4") {
             CAdmin::QueTeacher(); 
-            continue; 
         } else if (userOption == "0") {
             break; 
         } else {
@@ -113,7 +120,7 @@ void CAdmin::AddTeacher() {
     CTeacher teacher; 
     cin >> teacher; 
     if (CData::AddTeacherData(teacher)) CInterface::CMSPrompt("添加成功, 输入任意键以继续管理教师..."); 
-    else CInterface::CMSPrompt("添加失败"); 
+    else CInterface::CMSErrorReport("添加失败"); 
     CInterface::Flush(); 
     getchar(); 
 }
@@ -124,14 +131,19 @@ void CAdmin::DelTeacher() {
     string str; 
     cin >> str; 
     if (CData::DelTeacherData(str)) CInterface::CMSPrompt("删除成功，输入任意键以继续管理教师..."); 
-    else CInterface::CMSPrompt("删除失败"); 
+    else CInterface::CMSErrorReport("删除失败"); 
     CInterface::Flush(); 
     getchar(); 
 }
 
 void CAdmin::ModTeacher() {
     // 修改一位教师
-
+    CInterface::CMSPrompt("修改教师信息"); 
+    CTeacher teacher; 
+    cin >> teacher; 
+    if (CData::ModTeacherData(teacher, teacher.GetTeacherUsername())) CInterface::CMSPrompt("修改成功，输入任意键以继续管理教师..."); 
+    else CInterface::CMSErrorReport("删除失败"); 
+    getchar(); 
 }
 
 void CAdmin::QueTeacher() {
@@ -143,9 +155,12 @@ void CAdmin::QueTeacher() {
     // 打印
     cout << endl; 
     for (vector<CTeacher>::const_iterator iter = teacherList.cbegin(); iter != teacherList.cend(); ++iter) {
-        cout << (*iter).GetTeacherUsername() << (*iter).GetTeacherName() << (*iter).GetTeacherMajor() << endl; 
+        cout << (*iter).GetTeacherUsername() << " " << (*iter).GetTeacherName() << " " << (*iter).GetTeacherMajor() << endl; 
     }
-    
+    cout << endl; 
+    CInterface::CMSPrompt("输入任意键以继续管理教师..."); 
+    CInterface::Flush(); 
+    getchar(); 
 }
 
 

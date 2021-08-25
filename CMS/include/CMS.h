@@ -1,5 +1,7 @@
-#ifndef _CMS_H
-#define _CMS_H
+#ifndef         _CMS_H
+#define         _CMS_H
+
+// #define         DEBUG
 
 #define         SOFTWARE_TITLE          "CMS > "
 
