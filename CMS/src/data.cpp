@@ -167,11 +167,42 @@ bool CData::SetPassword(const string& username, const string& newPassword){
  * @return {*} 删除成功则返回值为真
  */
 bool CData::DelPassword(const string &username) {
+    // 打开user.dat文件
+    ifstream user_data(PSWD_FILE_PATH, ios::in); 
+    if (!user_data.is_open()) return CInterface::CMSErrorReport("Cannot open file"); 
+    
+    // 读取user.dat文件
+    // 使用关联容器unordered_map存储信息
+    string line, _username, _password;
+    unordered_map <string, string> userlist;
+    while (getline(user_data, line)) {
+        stringstream ssLine(line);
+        ssLine >> _username >> _password;
+        userlist.insert(make_pair(_username, _password));
+    }
 
-    // TODO:
-    // 
+    // 未找到用户
+    if(userlist.find(username) == userlist.end()) 
+	return CInterface::CMSErrorReport("Cannot find username in file 'user.dat'. "); 
+	
+    // 删除元素 
+    userlist.erase(username);
+	
+    // 关闭后打开并清空文件内容
+    user_data.close();
+    ofstream outfile(PSWD_FILE_PATH, ofstream::out | ofstream::trunc);
+    if (!outfile.is_open()) return CInterface::CMSErrorReport("Cannot open file");
+    
+    // 写入修改后的内容
+    for (auto iter = userlist.begin(); iter != userlist.end(); iter++) {
+        outfile << iter->first << " " << iter->second << endl;
+    }
 
+    outfile.close();
+    return true;
+	
 }
+
 
 /**
  * @description: 从文件user.dat中判断username是否唯一
