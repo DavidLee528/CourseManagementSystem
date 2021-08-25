@@ -1,7 +1,11 @@
 #include <iostream>
 #include <string>
 #include <utility>
+<<<<<<< HEAD
 #include <ctime>
+=======
+#include <conio.h>
+>>>>>>> cfb5b9eda6a20f52b20ad71e2177e0c28def9cbe
 
 #include "CMS.h"
 #include "interface.h"
@@ -93,11 +97,15 @@ bool CInterface::Login() {
 bool CInterface::UserInfoInput(std::string &username, std::string &password) {
     cout << "Username: "; 
     cin >> username; 
+<<<<<<< HEAD
     #ifdef _WIN32
         WindowGetPass("Password: ", password)
     #else
         password = getpass("Password: "); 
     #endif
+=======
+    WindowsGetPass("Password: ", password);
+>>>>>>> cfb5b9eda6a20f52b20ad71e2177e0c28def9cbe
     return true; 
 }
 
@@ -171,12 +179,16 @@ void CInterface::GetOption(const string &prompt, string& option) {
     cin >> option; 
 }
 
+<<<<<<< HEAD
 void CInterface::CMSPrompt(const string &prompt) {
     cout << GREEN << SOFTWARE_TITLE << NONE << BLUE << prompt << NONE << "  "; 
 }
 
 #ifdef _WIN32
 string & CInterface::WindowsGetPass(const std::string prompt, std::string& _password) {
+=======
+std::string& CInterface::WindowsGetPass(const std::string prompt, std::string& Password) {
+>>>>>>> cfb5b9eda6a20f52b20ad71e2177e0c28def9cbe
     char ch;
     int index = 0;
     char password[50];
@@ -194,6 +206,7 @@ string & CInterface::WindowsGetPass(const std::string prompt, std::string& _pass
     }
     password[index] = '\0';
 
+<<<<<<< HEAD
     _password = password;
 }
 #endif
@@ -218,4 +231,7 @@ string & CInterface::GetDate() {
     // TODO: 获取当前日期
     // 
     
+=======
+    Password = password;
+>>>>>>> cfb5b9eda6a20f52b20ad71e2177e0c28def9cbe
 }
