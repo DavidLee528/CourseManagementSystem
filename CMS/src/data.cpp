@@ -318,10 +318,13 @@ bool CData::DelTeacherData(const string &username) {
     // 初始化
     ifstream teacherData(TEACHER_FILE_PATH, ios::in); 
     if (!teacherData.is_open()) return CInterface::CMSErrorReport("Cannot open file."); 
+
+    // 删除user.dat中的用户记录
+    CData::DelPassword(username); 
     
     // 读取teacher.dat文件
-    // 使用关联容器unordered_map存储信息
-    vector<string> elem; 
+    // 将全部文件存入内存(跳删除用户)过待
+    
     vector<vector<string> > teacherList; 
     string line, _username, password, name, major; 
     while (getline(teacherData, line)) {
@@ -329,17 +332,12 @@ bool CData::DelTeacherData(const string &username) {
         ssLine >> _username >> password >> name >> major; 
         // 跳过待删除用户
         if (username == _username) continue; 
-        elem.clear(); 
-        elem.push_back(_username); 
-        elem.push_back(name); 
-        elem.push_back(major); 
+        vector<string> elem{_username, password, name, major}; 
         teacherList.push_back(elem); 
-        CData::DelPassword(username); 
     }
 
-    teacherData.close(); 
-
     // 清空文件内容
+    teacherData.close(); 
     ofstream newTeacherData(TEACHER_FILE_PATH, ios::out | ios::trunc); 
     if (!newTeacherData.is_open()) return CInterface::CMSErrorReport("Cannot open file."); 
     
@@ -363,6 +361,9 @@ bool CData::ModTeacherData(const CTeacher &teacher, const string &username) {
     // 初始化
     ifstream teacherData(TEACHER_FILE_PATH, ios::in); 
     if (!teacherData.is_open()) return CInterface::CMSErrorReport("Cannot open file."); 
+
+    // 修改user.dat中的用户记录
+    CData::SetPassword(username, teacher.password); 
     
     // 读取teacher.dat文件
     // 使用关联容器unordered_map存储信息
@@ -375,21 +376,15 @@ bool CData::ModTeacherData(const CTeacher &teacher, const string &username) {
         // 修改用户信息
         if (username == _username) {
             _username = teacher.username; 
-            password = teacher.password; 
             name = teacher.name; 
             major = teacher.major; 
         }
-        elem.clear(); 
-        elem.push_back(_username); 
-        elem.push_back(name); 
-        elem.push_back(major); 
+        vector<string> elem{_username, name, major}; 
         teacherList.push_back(elem); 
-        CData::SetPassword(username, password); 
-    }
-
-    teacherData.close(); 
+}
 
     // 清空文件内容
+    teacherData.close(); 
     ofstream newTeacherData(TEACHER_FILE_PATH, ios::out | ios::trunc); 
     if (!newTeacherData.is_open()) return CInterface::CMSErrorReport("Cannot open file."); 
     
