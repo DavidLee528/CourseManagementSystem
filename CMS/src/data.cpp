@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <vector>
 #include <algorithm>
+#include <iomanip>
 
 
 #include "../include/CMS.h"
@@ -30,6 +31,7 @@ using std::cout;
 using std::endl; 
 using std::vector; 
 using std::sort; 
+using std::setw; 
 
 /**
  * @description: 此函数读取user.txt文件，验证密码有效性
@@ -639,31 +641,46 @@ bool CData::QueCourseData(vector<CCourse> &courseList, const string &courseNumbe
         string _courseNumber, courseTitle, courseAttribute; 
         size_t totalClassHour, teachingHours, experimentHours, credit, courseSemester; 
         map<vector<string>, vector<size_t> > _courseList; 
+        cout << setw(8) << "课程编号" << "   |" << setw(20) << "课程名称" << "   |" << setw(6) << "性质" << "   |" << setw(6) << "学时" << "   |"; 
+        cout << setw(6) << "授课" << "   |" << setw(6) << "实验" << "   |" << setw(6) << "学分" << "   |" << setw(6) << "学期" << endl; 
         while (getline(in, line)) {
             stringstream ssLine(line); 
             ssLine >> _courseNumber >> courseTitle >> courseAttribute >> totalClassHour; 
             ssLine >> teachingHours >> experimentHours >> credit >> courseSemester; 
-            vector<string> sElem{_courseNumber, courseTitle, courseAttribute}; 
-            vector<size_t> iElem{totalClassHour, teachingHours, experimentHours, credit, courseSemester}; 
-            _courseList.insert(make_pair(sElem, iElem)); 
+            // vector<string> sElem{_courseNumber, courseTitle, courseAttribute}; 
+            // vector<size_t> iElem{totalClassHour, teachingHours, experimentHours, credit, courseSemester}; 
+            // _courseList.insert(make_pair(sElem, iElem)); 
+            cout << setw(8) << _courseNumber << "   |" << setw(20) << courseTitle << "   |" << setw(6) << courseAttribute << "   |" << setw(4) << totalClassHour << "   |"; 
+            cout << setw(4) << teachingHours << "   |" << setw(4) << experimentHours << "   |" << setw(4) << credit << "   |" << setw(4) << courseSemester << endl; 
+            // printf("%8s  %22s  %6s  %4ld  %4ld  %4ld %4ld  %4ld\n", _courseNumber.c_str(), courseTitle.c_str(), 
+            //        courseAttribute.c_str(), totalClassHour, teachingHours, experimentHours, credit, courseSemester); 
         }
         // 根据username排序
         // sort(_courseList.begin(), _courseList.end(), [](const vector<string> &lhs, const vector<string> &rhs) {
         //     return lhs[0] < rhs[0]; 
         // }); 
         // 遍历带出
-        
         for (map<vector<string>, vector<size_t> >::const_iterator iter = _courseList.cbegin(); iter != _courseList.cend(); ++iter) {
             CCourse course; 
-            course.SetCourseNumber((*iter).first[0]); 
-            course.SetCourseTitle((*iter).first[1]); 
-            course.SetCourseAttribute((*iter).first[2]); 
-            course.SetTotalClassHours((*iter).second[0]); 
-            course.SetTeachingHours((*iter).second[1]); 
-            course.SetExperimentHours((*iter).second[2]); 
-            course.SetCredit((*iter).second[3]); 
-            course.SetCourseSemester((*iter).second[4]); 
-            courseList.push_back(course); 
+            // course.SetCourseNumber((*iter).first[0]); 
+            // course.SetCourseTitle((*iter).first[1]); 
+            // course.SetCourseAttribute((*iter).first[2]); 
+            // course.SetTotalClassHours((*iter).second[0]); 
+            // course.SetTeachingHours((*iter).second[1]); 
+            // course.SetExperimentHours((*iter).second[2]); 
+            // course.SetCredit((*iter).second[3]); 
+            // course.SetCourseSemester((*iter).second[4]); 
+            // courseList.push_back(course); 
+
+
+            // cout << course.GetCourseNumber() << " ";  
+            // cout << course.GetCourseTitle() << " ";   
+            // cout << course.GetCourseAttribute() << " ";   
+            // cout << course.GetTotalClassHours() << " ";   
+            // cout << course.GetTeachingHours() << " ";   
+            // cout << course.GetExperimentHours() << " ";   
+            // cout << course.GetCredit() << " ";   
+            // cout << course.GetCourseSemester() << "\n"; 
         }
     } else {
         CCourse course; 
@@ -672,14 +689,8 @@ bool CData::QueCourseData(vector<CCourse> &courseList, const string &courseNumbe
         courseList.push_back(course); 
     }
 
-    cout << courseList[0].GetCourseNumber() << " ";  
-    cout << courseList[0].GetCourseTitle() << " ";   
-    cout << courseList[0].GetCourseAttribute() << " ";   
-    cout << courseList[0].GetTotalClassHours() << " ";   
-    cout << courseList[0].GetTeachingHours() << " ";   
-    cout << courseList[0].GetExperimentHours() << " ";   
-    cout << courseList[0].GetCredit() << " ";   
-    cout << courseList[0].GetCourseSemester() << "\n"; 
+    
+
     
     in.close(); 
     return true; 

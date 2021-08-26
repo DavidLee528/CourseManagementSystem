@@ -267,18 +267,18 @@ void CAdmin::QueCourse() {
     if (str == "#") CData::QueCourseData(courseList); 
     else CData::QueCourseData(courseList, str); 
     // 打印
-    cout << endl; 
-    for (vector<CCourse>::const_iterator iter = courseList.cbegin(); iter != courseList.cend(); ++iter) {
-        cout << (*iter).GetCourseNumber() << " ";  
-        cout << (*iter).GetCourseTitle() << " ";   
-        cout << (*iter).GetCourseAttribute() << " ";   
-        cout << (*iter).GetTotalClassHours() << " ";   
-        cout << (*iter).GetTeachingHours() << " ";   
-        cout << (*iter).GetExperimentHours() << " ";   
-        cout << (*iter).GetCredit() << " ";   
-        cout << (*iter).GetCourseSemester() << "\n";  
-    }
-    cout << endl; 
+    // cout << endl; 
+    // for (vector<CCourse>::const_iterator iter = courseList.cbegin(); iter != courseList.cend(); ++iter) {
+    //     cout << (*iter).GetCourseNumber() << " ";  
+    //     cout << (*iter).GetCourseTitle() << " ";   
+    //     cout << (*iter).GetCourseAttribute() << " ";   
+    //     cout << (*iter).GetTotalClassHours() << " ";   
+    //     cout << (*iter).GetTeachingHours() << " ";   
+    //     cout << (*iter).GetExperimentHours() << " ";   
+    //     cout << (*iter).GetCredit() << " ";   
+    //     cout << (*iter).GetCourseSemester() << "\n";  
+    // }
+    // cout << endl; 
     CInterface::CMSPrompt("输入任意键以继续管理课程..."); 
     CInterface::Flush(); 
     getchar(); 
