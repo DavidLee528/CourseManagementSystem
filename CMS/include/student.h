@@ -51,8 +51,11 @@ public:
 
 
     // 选课与退选课
-    bool SelectCourse(CStudent &student); 
-    bool CancelCourse(CStudent &student); 
+    bool SelectCourse(const string &courseNumber); 
+    bool CancelCourse(const string &courseNumber); 
+
+    // 查看选课结果
+    bool ShowMyCourseList(); 
 
     friend class CData; 
 }; 

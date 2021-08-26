@@ -175,24 +175,22 @@ void CInterface::sMain(CStudent &student) {
             continue; 
         } else if (userOption1 == "2") {
             // 选课
-            // CStudent::ShowOptionsLv2_2(); 
-            // CInterface::GetOption("Please select", userOption2); 
-            // if (userOption2 == "0") continue; 
-            CStudent::Selection(student);
+            CInterface::CMSPrompt("请输入退选课课程编码: "); 
+            string num; cin >> num; 
+            num = "," + num; 
+            student.SelectCourse(num); 
             continue; 
         } else if (userOption1 == "3") {
             // 查看选课结果
-            // CStudent::ShowOptionsLv2_3(); 
-            // CInterface::GetOption("Please select", userOption2); 
-            // if (userOption2 == "0") continue; 
-            CStudent::CheckCourse(student);
+            CInterface::CMSPrompt("查看您的选课结果"); 
+            student.ShowMyCourseList(); 
             continue; 
         } else if (userOption1 == "4") {
             // 退选
-            // CStudent::ShowOptionsLv2_4(); 
-            // CInterface::GetOption("Please select", userOption2); 
-            // if (userOption2 == "0") continue; 
-            CStudent::Deselection(student);
+            CInterface::CMSPrompt("请输入退选课课程编码: "); 
+            string num; cin >> num; 
+            num = "," + num; 
+            student.CancelCourse(num); 
             continue; 
         } else if (userOption1 == "0") {
             // 退出系统

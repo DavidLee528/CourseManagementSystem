@@ -1,10 +1,12 @@
 #include <iostream>
 #include <string>
+#include <sstream>
 
 #include "../include/student.h"
 #include "../include/CMS.h"
 #include "../include/interface.h"
 #include "../include/data.h"
+#include "../course.h"
 
 using std::cin;
 using std::cout; 
@@ -12,6 +14,7 @@ using std::endl;
 using std::string; 
 using std::istream; 
 using std::ostream; 
+using std::stringstream; 
 
 CStudent::CStudent() {
     
@@ -160,13 +163,15 @@ bool CStudent::ChangePass(CStudent &student) {
 bool CStudent::Selection(CStudent &student) {
 
 }
+
 bool CStudent::CheckCourse(CStudent &student) {
     
 }
+
 bool CStudent::Deselection(CStudent &student) {
 
 }
-=======
+
 /**
  * @description: 名  称: 选课
  *               调用者: CInterface类sMain函数
@@ -175,11 +180,19 @@ bool CStudent::Deselection(CStudent &student) {
  *               备  注: 000000,600001,600003,600008
  *                      初始字符串为000000
  *                      每次追加,xxxxxx
- * @param {CStudent} &student 
+ * @param {CStudent} &student 需要拼接前置英文逗号
  * @return {*} 为真则成功
  */
-bool CStudent::SelectCourse(CStudent &student) {
+bool CStudent::SelectCourse(const string &courseNumber) {
 
+    // 找到重复课程
+    if (course.find(courseNumber) != string::npos) 
+        return CInterface::CMSErrorReport("Course Exist."); 
+
+    // 尾后拼接新课程编码
+    course = course + courseNumber; 
+
+    return true; 
 }
 
 /**
@@ -188,9 +201,45 @@ bool CStudent::SelectCourse(CStudent &student) {
  *               功  能: 在CStudent类对象的私有数据成员course
  *                       中删除一个指定的6位课程编码
  *               备  注: 别忘记删除逗号
- * @param {CStudent} &student
+ * @param {CStudent} &student 需要拼接前置逗号
  * @return {*} 为真则成功
  */
-bool CStudent::CancelCourse(CStudent &student) {
+bool CStudent::CancelCourse(const string &courseNumber) {
 
+    // 未找到课程
+    if (course.find(courseNumber) == string::npos) 
+        return CInterface::CMSErrorReport("Cannot find course."); 
+
+    // 得到子串首次出现的位置
+    size_t pos = course.find(courseNumber); 
+
+    // 删除匹配的子串
+    course.erase(pos, 7); 
+    
+    return true; 
+}
+
+/**
+ * @description: 显示选课结果
+ * @param {*}
+ * @return {*}
+ */
+bool CStudent::ShowMyCourseList() {
+    string buffer; 
+    vector<string> courseNumberList; 
+    vector<CCourse> courseList; 
+    stringstream ss(course); 
+
+    // 原字符串以逗号分隔每个课程编码
+    while (getline(ss, buffer, ',')) 
+        if (buffer != "000000") courseNumberList.push_back(buffer); 
+
+    // 遍历课程编码
+    // 查询课程信息
+    for (vector<string>::const_iterator iter = courseNumberList.cbegin();
+                                        iter != courseNumberList.cend(); ++iter) {
+        CData::QueCourseData(courseList, (*iter)); 
+    }
+
+    return true; 
 }
