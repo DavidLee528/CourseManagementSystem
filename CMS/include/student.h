@@ -12,8 +12,9 @@ protected:
     string password; 
     string name; 
     string major; 
-    string course;
 
+    string course;
+  
 public: 
     CStudent(); 
     CStudent(const string &_username); 
@@ -47,6 +48,11 @@ public:
 
     static bool CheckSelfInfo(CStudent &student); 
     static bool ChangePass(CStudent &student); 
+
+
+    // 选课与退选课
+    bool SelectCourse(CStudent &student); 
+    bool CancelCourse(CStudent &student); 
 
     friend class CData; 
 }; 
