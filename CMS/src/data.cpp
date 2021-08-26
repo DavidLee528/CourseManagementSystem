@@ -486,7 +486,182 @@ bool CData::QueTeacherData(vector<CTeacher> &teacherList, const string &username
 }
 
 
+/**
+ * @description: 向文件写入一个学生信息
+ *               需要检查学生是否重复
+ * @param {CStudent} &student CStudent类对象
+ * @return {*} 为真则成功
+ */
+bool CData::AddStudentData(const CStudent &student) {
 
+    // 初始化文件
+    ofstream studentData(STUDENT_FILE_PATH, ios::app); 
+    if (!studentData.is_open()) return CInterface::CMSErrorReport("Cannot open file."); 
+
+    // 检查是否重复添加
+    CStudent t; 
+    if (CData::FindStudentByUsername(student.GetStudentUsername(), t)) 
+        return CInterface::CMSErrorReport("Student exist."); 
+    
+    // 检查用户名格式合法性
+    if (!CData::CheckUsernameFormat(student.GetStudentUsername(), STUDENT_AUTH_CODE)) 
+        return CInterface::CMSErrorReport("Wrong username format."); 
+
+    // 向student.dat增加一条学生信息
+    studentData << student.GetStudentUsername() << " "; 
+    studentData << student.GetStudentName() << " "; 
+    studentData << student.GetStudentMajor() << "\n"; 
+
+    // 向user.dat增加一条用户记录
+    SetPassword(student.GetStudentUsername(), student.password); 
+
+    studentData.close(); 
+    return true; 
+}
+
+/**
+ * @description: 从文件删除一个学生信息
+ * @param {string} &username 学号
+ * @return {*} 为真则成功
+ */
+bool CData::DelStudentData(const string &username) {
+
+    // 初始化
+    ifstream studentData(STUDENT_FILE_PATH, ios::in); 
+    if (!studentData.is_open()) return CInterface::CMSErrorReport("Cannot open file."); 
+
+    // 删除user.dat中的用户记录
+    CData::DelPassword(username); 
+    
+    // 读取student.dat文件
+    // 将全部文件存入内存(跳删除用户)过待
+    
+    vector<vector<string> > studentList; 
+    string line, _username, password, name, major; 
+    while (getline(studentData, line)) {
+        stringstream ssLine(line); 
+        ssLine >> _username >> password >> name >> major; 
+        // 跳过待删除用户
+        if (username == _username) continue; 
+        vector<string> elem{_username, password, name, major}; 
+        studentList.push_back(elem); 
+    }
+
+    // 清空文件内容
+    studentData.close(); 
+    ofstream newstudentData(STUDENT_FILE_PATH, ios::out | ios::trunc); 
+    if (!newstudentData.is_open()) return CInterface::CMSErrorReport("Cannot open file."); 
+    
+    // 向文件写入内容
+    for (vector<vector<string> >::const_iterator iter = studentList.cbegin(); iter != studentList.cend(); ++iter) {
+        newstudentData << (*iter)[0] << " " << (*iter)[1] << " " << (*iter)[2] << "\n"; 
+    }
+
+    newstudentData.close(); 
+    return true; 
+}
+
+/**
+ * @description: 修改学生信息
+ * @param {CStudent} &sdudent
+ * @param {string} &username
+ * @return {*} 为真则修改成功
+ */
+bool CData::ModStudentData(const CStudent &student, const string &username) {
+
+    // 初始化
+    ifstream studentData(STUDENT_FILE_PATH, ios::in); 
+    if (!studentData.is_open()) return CInterface::CMSErrorReport("Cannot open file."); 
+
+    // 修改user.dat中的用户记录
+    CData::SetPassword(username, student.password); 
+    
+    // 读取student.dat文件
+    // 使用关联容器unordered_map存储信息
+    vector<string> elem; 
+    vector<vector<string> > studentList; 
+    string line, _username, password, name, major; 
+    while (getline(studentData, line)) {
+        stringstream ssLine(line); 
+        ssLine >> _username >> password >> name >> major; 
+        // 修改用户信息
+        if (username == _username) {
+            _username = student.username; 
+            name = student.name; 
+            major = student.major; 
+        }
+        vector<string> elem{_username, name, major}; 
+        studentList.push_back(elem); 
+    }
+
+    // 清空文件内容
+    studentData.close(); 
+    ofstream newStudentData(STUDENT_FILE_PATH, ios::out | ios::trunc); 
+    if (!newStudentData.is_open()) return CInterface::CMSErrorReport("Cannot open file."); 
+    
+    // 向文件写入内容
+    for (vector<vector<string> >::const_iterator iter = studentList.cbegin(); iter != studentList.cend(); ++iter) {
+        newStudentData << (*iter)[0] << " " << (*iter)[1] << " " << (*iter)[2] << "\n"; 
+    }
+
+    newStudentData.close(); 
+    return true; 
+}
+
+
+/**
+ * @description: 从文件读取学生信息
+ *               若没有指定username，则查询所有学生信息
+ * @param {*} 使用可变长数组studentList带出学生数据
+ * @return {*} 为真则成功
+ */
+bool CData::QueStudentData(vector<CStudent> &studentList, const string &username) {
+
+    // 初始化输入文件流
+    // 检查参数错误
+    ifstream in(STUDENT_FILE_PATH, ios::in); 
+    if (!in.is_open()) return CInterface::CMSErrorReport("Cannot open file."); 
+    if (username.empty()) return CInterface::CMSErrorReport("Empty username."); 
+    if (!studentList.empty()) studentList.clear(); 
+
+    // 用户名为默认参数时，查询全部教师信息
+    // 用户名非默认参数时，查询用户名对应的教师信息
+    if (username == "$default$") {
+        // 读取student.dat
+        string line, _username, _name, _major; 
+        vector<vector<string> > sVec; 
+        vector<string> element; 
+        while (getline(in, line)) {
+            stringstream ssLine(line); 
+            ssLine >> _username >> _name >> _major; 
+            element.clear(); 
+            element.push_back(_username); 
+            element.push_back(_name); 
+            element.push_back(_major); 
+            sVec.push_back(element); 
+        }
+        // 根据username排序
+        sort(sVec.begin(), sVec.end(), [](const vector<string> &lhs, const vector<string> &rhs) {
+            if (lhs[0].length() != rhs[0].length()) return lhs[0].length() < rhs[0].length(); 
+            return lhs[0] < rhs[0]; 
+        }); 
+        // 遍历带出
+        CStudent student; 
+        for (vector<vector<string> >::const_iterator iter = sVec.cbegin(); iter != sVec.cend(); ++iter) {
+            student.SetStudentUsername((*iter)[0]); 
+            student.SetStudentName((*iter)[1]); 
+            student.SetStudentMajor((*iter)[2]); 
+            studentList.push_back(student); 
+        }
+    } else {
+        CStudent student; 
+        FindStudentByUsername(username, student); 
+        studentList.push_back(student); 
+    }
+    
+    in.close(); 
+    return true; 
+}
 
 /**
  * @description: 向文件一门课程
