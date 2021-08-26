@@ -26,6 +26,3 @@ $(OBJ)/%.o: ${SRC}/%.cpp
 clean: 
 	find $(OBJ) -name *.o -exec rm -rf {} \; 
 	rm -rf $(BIN_TARGET)
-
-
-

@@ -114,9 +114,9 @@ bool CAdmin::ManageTeacher() {
 
 void CAdmin::AddTeacher() {
     CInterface::CMSPrompt("添加教师信息"); 
-    CTeacher course; 
-    cin >> course; 
-    if (CData::AddTeacherData(course)) CInterface::CMSPrompt("添加成功, 输入任意键以继续管理教师..."); 
+    CTeacher teacher; 
+    cin >> teacher; 
+    if (CData::AddTeacherData(teacher)) CInterface::CMSPrompt("添加成功, 输入任意键以继续管理教师..."); 
     else CInterface::CMSErrorReport("添加失败"); 
     CInterface::Flush(); 
     getchar(); 
@@ -165,34 +165,67 @@ void CAdmin::QueTeacher() {
 // ======================================================================= //
 
 bool CAdmin::ManageStudent() {
-    // if (option == "1") {
-    //     CAdmin::AddStudent(); 
-    // } else if (option == "2") {
-    //     CAdmin::DelStudent(); 
-    // } else if (option == "3") {
-    //     CAdmin::ModStudent(); 
-    // } else if (option == "4") {
-    //     CAdmin::QueStudent(); 
-    // } else {
-    //     return CInterface::CMSErrorReport("In function ManageStudent"); 
-    // }
-    // return true; 
+
+    while (1) {
+        string userOption; 
+        CAdmin::ShowOptionsLv2_2(); 
+        CInterface::GetOption("Please select", userOption); 
+        if (userOption == "1") {
+            CAdmin::AddStudent(); 
+            continue; 
+        } else if (userOption == "2") {
+            CAdmin::DelStudent(); 
+            continue; 
+        } else if (userOption == "3") {
+            CAdmin::ModStudent(); 
+            continue; 
+        } else if (userOption == "4") {
+            CAdmin::QueStudent(); 
+            continue; 
+        } else if (userOption == "0") {
+            break; 
+        } else {
+            return CInterface::CMSErrorReport("In function ManageStudent"); 
+        }
+    }
+    
+    return true; 
 }
 
 void CAdmin::AddStudent() {
-    // 添加一名学生
+    CInterface::CMSPrompt("添加学生信息"); 
+    CStudent student; 
+    cin >> student; 
+    if (CData::AddStudentData(student)) CInterface::CMSPrompt("添加成功, 输入任意键以继续管理学生..."); 
+    else CInterface::CMSErrorReport("添加失败"); 
+    CInterface::Flush(); 
+    getchar(); 
 }
 
 void CAdmin::DelStudent() {
-    // 删除一名学生
+    CInterface::CMSPrompt("删除一名学生，请输入学号："); 
+    string str; cin >> str; 
+    if (CData::DelStudentData(str)) CInterface::CMSPrompt("删除成功，输入任意键以继续管理"); 
+    else CInterface::CMSPrompt("删除失败"); 
+    CInterface::Flush(); 
+    getchar(); 
 }
 
 void CAdmin::ModStudent() {
-    // 修改一名学生
+    CInterface::CMSPrompt("修改学生信息，请输入："); 
+    CStudent student; 
+    cin >> student; 
+    if (CData::ModStudentData(student, student.GetStudentUsername())) CInterface::CMSPrompt("修改成功，输入任意键以继续管理"); 
+    else CInterface::CMSPrompt("修改失败"); 
+    CInterface::Flush(); 
+    getchar(); 
 }
 
 void CAdmin::QueStudent() {
-    // 查询所有学生信息
+    CInterface::CMSPrompt("查询学生信息"); 
+    CData::QueStudentData(); 
+    CInterface::Flush(); 
+    getchar(); 
 }
 
 

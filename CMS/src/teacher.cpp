@@ -115,41 +115,36 @@ void CTeacher::QueInfo(const CTeacher &teacher) {
     cout << "教工号：" << self[0].GetTeacherUsername() << endl; 
     cout << "姓  名：" << self[0].GetTeacherName() << endl; 
     cout << "专  业：" << self[0].GetTeacherMajor() << endl; 
+    CInterface::CMSPrompt("输入回车键以继续..."); 
+    CInterface::Flush(); 
+    getchar(); 
 }
 
 void CTeacher::ModPassword(const CTeacher &teacher) {
-    CInterface::CMSPrompt("修改个人密码"); 
+    CInterface::CMSPrompt("修改个人密码，请输入新密码："); 
     string newPassword; 
     cin >> newPassword; 
     if (!CData::SetPassword(teacher.GetTeacherUsername(), newPassword))
         CInterface::CMSErrorReport("Fail to update password."); 
-    CInterface::CMSPrompt("密码修改成功，输入任意键以继续..."); 
+    CInterface::CMSPrompt("密码修改成功，输入回车键以继续..."); 
     CInterface::Flush(); 
     getchar(); 
 }
 
 void CTeacher::QueCourseList() {
-    CInterface::CMSPrompt("查询课程列表, 请输入课程编号(输入#以查询全部课程)"); 
-    string str; cin >> str; 
+    CInterface::CMSPrompt("查询课程列表"); 
     vector<CCourse> courseList; 
-    if (str == "#") CData::QueCourseData(courseList); 
-    else CData::QueCourseData(courseList, str); 
-    // TODO:打印课程列表
-    // 
-    CInterface::CMSPrompt("输入任意键以继续..."); 
+    CData::QueCourseData(courseList); 
+    CInterface::CMSPrompt("输入回车键以继续..."); 
     CInterface::Flush(); 
     getchar(); 
 }
 
 void CTeacher::QueStudentList() {
-    CInterface::CMSPrompt("查询学生列表, 请输入学号(输入#以查询全部学生)"); 
-    string str; cin >> str; 
+    CInterface::CMSPrompt("查询学生列表"); 
     vector<CStudent> studentList; 
-    if (str == "#") CData::QueStudentData(studentList); 
-    else CData::QueStudentData(studentList, str); 
-    // TODO:打印学生列表
-    // 
-    CInterface::CMSPrompt("输入任意键以继续..."); 
+    CData::QueStudentData(); 
+    CInterface::CMSPrompt("输入回车键以继续..."); 
     CInterface::Flush(); 
     getchar(); 
 }

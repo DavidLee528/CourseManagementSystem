@@ -162,37 +162,41 @@ void CInterface::aMain(CAdmin &admin) {
 
 void CInterface::sMain(CStudent &student) {
     while (1) {
-        string userOption1 = "#"; 
-        string userOption2 = "#"; 
+        string userOption = "#"; 
         CStudent::ShowOptionsLv1(); 
-        CInterface::GetOption("Please select", userOption1); 
-        if (userOption1 == "1") {
-            // 查询个人信息，选择是否修改密码
-            CStudent::ShowOptionsLv2_1(); 
-            CInterface::GetOption("Please select", userOption2); 
-            if (userOption2 == "0") continue; 
-            CStudent::Check_Change(userOption2, student); 
+        CInterface::GetOption("Please select", userOption); 
+        if (userOption == "1") {
+            // 查询个人信息
+            CInterface::CMSPrompt("查询个人信息"); 
+            student.ShowMyInfo(); 
             continue; 
-        } else if (userOption1 == "2") {
+        } else if (userOption == "2") {
+            // 修改个人密码
+            CInterface::CMSPrompt("请输入新密码："); 
+            string num; cin >> num; 
+            student.ChangePass(num); 
+            continue; 
+        } else if (userOption == "3") {
             // 选课
-            CInterface::CMSPrompt("请输入退选课课程编码: "); 
+            CData::QueCourseData(); 
+            CInterface::CMSPrompt("请输入课程编码: "); 
             string num; cin >> num; 
             num = "," + num; 
             student.SelectCourse(num); 
             continue; 
-        } else if (userOption1 == "3") {
+        } else if (userOption == "4") {
             // 查看选课结果
             CInterface::CMSPrompt("查看您的选课结果"); 
             student.ShowMyCourseList(); 
             continue; 
-        } else if (userOption1 == "4") {
+        } else if (userOption == "5") {
             // 退选
             CInterface::CMSPrompt("请输入退选课课程编码: "); 
             string num; cin >> num; 
             num = "," + num; 
             student.CancelCourse(num); 
             continue; 
-        } else if (userOption1 == "0") {
+        } else if (userOption == "0") {
             // 退出系统
             CInterface::Flush(); 
             CMSPrompt("Press any key to exit..."); 

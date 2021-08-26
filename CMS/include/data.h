@@ -42,11 +42,13 @@ public:
     static bool DelStudentData(const string &username); 
     static bool ModStudentData(const CStudent &student, const string &username); 
     static bool QueStudentData(vector<CStudent> &studentList, const string &username = "$default$"); 
+    static bool QueStudentData(); 
 
     static bool AddCourseData(const CCourse &course); 
     static bool DelCourseData(const string &courseNumber); 
     static bool ModCourseData(const CCourse &course); 
     static bool QueCourseData(vector<CCourse> &courseList, const string &courseNumber = "$default$"); 
+    static bool QueCourseData(); 
 
     // 给CStudent类使用的接口
     static bool SelectCourse(const vector<string> &courseList, const string &username); 

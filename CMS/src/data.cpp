@@ -290,15 +290,16 @@ bool CData::FindStudentByUsername(const string &username, CStudent &student) {
     ifstream student_data(STUDENT_FILE_PATH, ios::in); 
     if (!student_data.is_open()) return CInterface::CMSErrorReport("Cannot open file"); 
     
-    string line, _username, _name, _major;
+    string line, _username, _name, _major, _course;
     while (getline(student_data, line)) {
         stringstream ssLine(line);
-        ssLine >> _username >> _name >> _major;
+        ssLine >> _username >> _name >> _major >> _course;
         
         if (username == _username){
 	   	    student.SetStudentUsername(_username);
 	    	student.SetStudentName(_name);
 	    	student.SetStudentMajor(_major);
+	    	student.SetStudentCourse(_course);
 	    	flag = 1;
 	    	break;
 		}
@@ -509,7 +510,8 @@ bool CData::AddStudentData(const CStudent &student) {
     // 向student.dat增加一条学生信息
     studentData << student.GetStudentUsername() << " "; 
     studentData << student.GetStudentName() << " "; 
-    studentData << student.GetStudentMajor() << "\n"; 
+    studentData << student.GetStudentMajor() << " "; 
+    studentData << "000000" << "\n"; 
 
     // 向user.dat增加一条用户记录
     SetPassword(student.GetStudentUsername(), student.password); 
@@ -533,16 +535,15 @@ bool CData::DelStudentData(const string &username) {
     CData::DelPassword(username); 
     
     // 读取student.dat文件
-    // 将全部文件存入内存(跳删除用户)过待
-    
+    // 将全部文件存入内存(跳过待删除用户)
     vector<vector<string> > studentList; 
-    string line, _username, password, name, major; 
+    string line, _username, name, major, course; 
     while (getline(studentData, line)) {
         stringstream ssLine(line); 
-        ssLine >> _username >> password >> name >> major; 
+        ssLine >> _username >> name >> major >> course; 
         // 跳过待删除用户
         if (username == _username) continue; 
-        vector<string> elem{_username, password, name, major}; 
+        vector<string> elem{_username, name, major, course}; 
         studentList.push_back(elem); 
     }
 
@@ -553,7 +554,7 @@ bool CData::DelStudentData(const string &username) {
     
     // 向文件写入内容
     for (vector<vector<string> >::const_iterator iter = studentList.cbegin(); iter != studentList.cend(); ++iter) {
-        newstudentData << (*iter)[0] << " " << (*iter)[1] << " " << (*iter)[2] << "\n"; 
+        newstudentData << (*iter)[0] << " " << (*iter)[1] << " " << (*iter)[2] << " " << (*iter)[3] << "\n"; 
     }
 
     newstudentData.close(); 
@@ -579,17 +580,18 @@ bool CData::ModStudentData(const CStudent &student, const string &username) {
     // 使用关联容器unordered_map存储信息
     vector<string> elem; 
     vector<vector<string> > studentList; 
-    string line, _username, password, name, major; 
+    string line, _username, name, major, course; 
     while (getline(studentData, line)) {
         stringstream ssLine(line); 
-        ssLine >> _username >> password >> name >> major; 
+        ssLine >> _username >> name >> major >> course; 
         // 修改用户信息
         if (username == _username) {
             _username = student.username; 
             name = student.name; 
             major = student.major; 
+            course = student.course; 
         }
-        vector<string> elem{_username, name, major}; 
+        vector<string> elem{_username, name, major, course}; 
         studentList.push_back(elem); 
     }
 
@@ -600,7 +602,7 @@ bool CData::ModStudentData(const CStudent &student, const string &username) {
     
     // 向文件写入内容
     for (vector<vector<string> >::const_iterator iter = studentList.cbegin(); iter != studentList.cend(); ++iter) {
-        newStudentData << (*iter)[0] << " " << (*iter)[1] << " " << (*iter)[2] << "\n"; 
+        newStudentData << (*iter)[0] << " " << (*iter)[1] << " " << (*iter)[2] << " " << (*iter)[3] << "\n"; 
     }
 
     newStudentData.close(); 
@@ -656,6 +658,34 @@ bool CData::QueStudentData(vector<CStudent> &studentList, const string &username
         CStudent student; 
         FindStudentByUsername(username, student); 
         studentList.push_back(student); 
+    }
+    
+    in.close(); 
+    return true; 
+}
+
+/**
+ * @description: 查询并打印学生信息
+ * @param {*}
+ * @return {*}
+ */
+bool CData::QueStudentData() {
+
+    // 初始化输入文件流
+    ifstream in(STUDENT_FILE_PATH, ios::in); 
+    if (!in.is_open()) return CInterface::CMSErrorReport("Cannot open file."); 
+
+    // 显示信息
+    cout << setw(14) << "学号" << " " << setw(8) << "姓名" << " "; 
+    cout << setw(10) << "专业" << " " << setw(20) << "选课" << " " << endl; 
+
+    // 读取student.dat
+    string line, _username, _name, _major, course; 
+    while (getline(in, line)) {
+        stringstream ssLine(line); 
+        ssLine >> _username >> _name >> _major >> course; 
+        cout << setw(14) << _username << " " << setw(8) << _name << " "; 
+        cout << setw(10) << _major << " " << setw(20) << course << " " << endl; 
     }
     
     in.close(); 
@@ -864,6 +894,24 @@ bool CData::QueCourseData(vector<CCourse> &courseList, const string &courseNumbe
         // TODO: FindCourseByCourseNumber()
         // FindTeacherByUsername(courseNumber, teacher); 
         // courseList.push_back(course); 
+        string line; 
+        string _courseNumber, courseTitle, courseAttribute; 
+        size_t totalClassHour, teachingHours, experimentHours, credit, courseSemester; 
+        map<vector<string>, vector<size_t> > _courseList; 
+        while (getline(in, line)) {
+            stringstream ssLine(line); 
+            ssLine >> _courseNumber >> courseTitle >> courseAttribute >> totalClassHour; 
+            ssLine >> teachingHours >> experimentHours >> credit >> courseSemester; 
+            // vector<string> sElem{_courseNumber, courseTitle, courseAttribute}; 
+            // vector<size_t> iElem{totalClassHour, teachingHours, experimentHours, credit, courseSemester}; 
+            // _courseList.insert(make_pair(sElem, iElem)); 
+            if (_courseNumber == courseNumber) {
+                cout << setw(8) << _courseNumber << "   |" << setw(20) << courseTitle << "   |" << setw(6) << courseAttribute << "   |" << setw(4) << totalClassHour << "   |"; 
+                cout << setw(4) << teachingHours << "   |" << setw(4) << experimentHours << "   |" << setw(4) << credit << "   |" << setw(4) << courseSemester << endl; 
+            }
+            // printf("%8s  %22s  %6s  %4ld  %4ld  %4ld %4ld  %4ld\n", _courseNumber.c_str(), courseTitle.c_str(), 
+            //        courseAttribute.c_str(), totalClassHour, teachingHours, experimentHours, credit, courseSemester); 
+        }
     }
 
     
@@ -871,3 +919,34 @@ bool CData::QueCourseData(vector<CCourse> &courseList, const string &courseNumbe
     return true; 
 }
 
+/**
+ * @description: 查询并打印全部信息
+ * @param {*}   
+ * @return {*}
+ */
+bool CData::QueCourseData() {
+
+    ifstream in(COURSE_FILE_PATH, ios::in); 
+    if (!in.is_open()) return CInterface::CMSErrorReport("Cannot open file."); 
+
+    // 显示信息
+    cout << setw(8) << "课程编号" << "   |" << setw(20) << "课程名称" << "   |" << setw(6) << "性质" << "   |" << setw(6) << "学时" << "   |"; 
+    cout << setw(6) << "授课" << "   |" << setw(6) << "实验" << "   |" << setw(6) << "学分" << "   |" << setw(6) << "学期" << endl; 
+
+    // 读取course.dat
+    string line; 
+    string _courseNumber, courseTitle, courseAttribute; 
+    size_t totalClassHour, teachingHours, experimentHours, credit, courseSemester; 
+    while (getline(in, line)) {
+        // 存入临时变量
+        stringstream ssLine(line); 
+        ssLine >> _courseNumber >> courseTitle >> courseAttribute >> totalClassHour; 
+        ssLine >> teachingHours >> experimentHours >> credit >> courseSemester; 
+        // 等宽输出
+        cout << setw(8) << _courseNumber << "   |" << setw(20) << courseTitle << "   |" << setw(6) << courseAttribute << "   |" << setw(4) << totalClassHour << "   |"; 
+        cout << setw(4) << teachingHours << "   |" << setw(4) << experimentHours << "   |" << setw(4) << credit << "   |" << setw(4) << courseSemester << endl; 
+    }
+
+    in.close(); 
+    return true; 
+}

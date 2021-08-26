@@ -47,14 +47,16 @@ public:
     static bool Deselection(CStudent &student);
 
     static bool CheckSelfInfo(CStudent &student); 
-    static bool ChangePass(CStudent &student); 
 
+    // 更换密码
+    bool ChangePass(const string &newPassword); 
 
     // 选课与退选课
     bool SelectCourse(const string &courseNumber); 
     bool CancelCourse(const string &courseNumber); 
 
-    // 查看选课结果
+    // 显示个人信息与显示选课结果
+    bool ShowMyInfo(); 
     bool ShowMyCourseList(); 
 
     friend class CData; 
