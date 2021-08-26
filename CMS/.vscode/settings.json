@@ -46,6 +46,8 @@
         "typeinfo": "cpp",
         "map": "cpp",
         "unordered_set": "cpp",
-        "iomanip": "cpp"
+        "iomanip": "cpp",
+        "ctime": "cpp",
+        "cinttypes": "cpp"
     }
 }

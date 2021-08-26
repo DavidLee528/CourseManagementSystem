@@ -25,14 +25,23 @@ public:
 
 public: 
     
+    // 接口
     const string & GetTeacherUsername() const; 
     const string & GetTeacherName() const; 
     const string & GetTeacherMajor() const; 
-
     void SetTeacherUsername(const string &rhs); 
     void SetTeacherPassword(const string &rhs); 
     void SetTeacherName(const string &rhs); 
     void SetTeacherMajor(const string &rhs); 
+
+    // 分支
+    static void ShowOptionsLv1(const CTeacher &teacher); 
+
+    // 功能
+    static void QueInfo(const CTeacher &teacher); 
+    static void ModPassword(const CTeacher &teacher); 
+    static void QueCourseList(); 
+    static void QueStudentList(); 
 
     
     friend class CData; 

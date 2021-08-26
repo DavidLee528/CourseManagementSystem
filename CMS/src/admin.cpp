@@ -257,6 +257,7 @@ void CAdmin::ModCourse() {
     cin >> course; 
     if (CData::ModCourseData(course)) CInterface::CMSPrompt("修改成功，输入任意键以继续管理课程..."); 
     else CInterface::CMSErrorReport("删除失败"); 
+    CInterface::Flush(); 
     getchar(); 
 }
 

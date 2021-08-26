@@ -130,23 +130,22 @@ bool CInterface::InitScreen() {
 void CInterface::aMain(CAdmin &admin) {
     while (1) {
         // 用户选项初始化
-        string userOption1 = "#"; 
-        string userOption2 = "#"; 
+        string userOption = "#"; 
         CAdmin::ShowOptionsLv1(); 
-        CInterface::GetOption("Please select", userOption1); 
-        if (userOption1 == "1") {
+        CInterface::GetOption("Please select", userOption); 
+        if (userOption == "1") {
             // 管理教师
             CAdmin::ManageTeacher(); 
             continue; 
-        } else if (userOption1 == "2") {
+        } else if (userOption == "2") {
             // 管理学生
-            // CAdmin::ManageStudent(); 
+            CAdmin::ManageStudent(); 
             continue; 
-        } else if (userOption1 == "3") {
+        } else if (userOption == "3") {
             // 管理课程
             CAdmin::ManageCourse(); 
             continue; 
-        } else if (userOption1 == "0") {
+        } else if (userOption == "0") {
             // 退出系统
             CInterface::Flush(); 
             CMSPrompt("Press any key to exit..."); 
@@ -160,47 +159,91 @@ void CInterface::aMain(CAdmin &admin) {
     }
 }
 
+
 void CInterface::sMain(CStudent &student) {
-    // 高泽军完成
+    while (1) {
+        string userOption1 = "#"; 
+        string userOption2 = "#"; 
+        CStudent::ShowOptionsLv1(); 
+        CInterface::GetOption("Please select", userOption1); 
+        if (userOption1 == "1") {
+            // 查询个人信息，选择是否修改密码
+            CStudent::ShowOptionsLv2_1(); 
+            CInterface::GetOption("Please select", userOption2); 
+            if (userOption2 == "0") continue; 
+            CStudent::Check_Change(userOption2, student); 
+            continue; 
+        } else if (userOption1 == "2") {
+            // 选课
+            // CStudent::ShowOptionsLv2_2(); 
+            // CInterface::GetOption("Please select", userOption2); 
+            // if (userOption2 == "0") continue; 
+            CStudent::Selection(student);
+            continue; 
+        } else if (userOption1 == "3") {
+            // 查看选课结果
+            // CStudent::ShowOptionsLv2_3(); 
+            // CInterface::GetOption("Please select", userOption2); 
+            // if (userOption2 == "0") continue; 
+            CStudent::CheckCourse(student);
+            continue; 
+        } else if (userOption1 == "4") {
+            // 退选
+            // CStudent::ShowOptionsLv2_4(); 
+            // CInterface::GetOption("Please select", userOption2); 
+            // if (userOption2 == "0") continue; 
+            CStudent::Deselection(student);
+            continue; 
+        } else if (userOption1 == "0") {
+            // 退出系统
+            CInterface::Flush(); 
+            CMSPrompt("Press any key to exit..."); 
+            getchar(); 
+            return ; 
+        } else {
+            cout << "_default" << endl; 
+            continue; 
+        }
+
+        break;   
+    }
 }
 
+
 void CInterface::tMain(CTeacher &teacher) {
-    // while (1) {
-    //     // 用户选项初始化
-    //     string userOption1 = "#"; 
-    //     string userOption2 = "#"; 
-    //     CAdmin::ShowOptionsLv1(); 
-    //     CInterface::GetOption("Please select", userOption1); 
-    //     if (userOption1 == "1") {
-    //         // 管理教师
-    //         CAdmin::ManageCours(); 
-    //         continue; 
-    //     } else if (userOption1 == "2") {
-    //         // 管理学生
-    //         CAdmin::ShowOptionsLv2_2(); 
-    //         CInterface::GetOption("Please select", userOption2); 
-    //         if (userOption2 == "0") continue; 
-    //         // CAdmin::ManageStudent(userOption2); 
-    //         continue; 
-    //     } else if (userOption1 == "3") {
-    //         // 管理课程
-    //         CAdmin::ShowOptionsLv2_3(); 
-    //         CInterface::GetOption("Please select", userOption2); 
-    //         if (userOption2 == "0") continue; 
-    //         // CAdmin::ManageCourse(userOption2); 
-    //         continue; 
-    //     } else if (userOption1 == "0") {
-    //         // 退出系统
-    //         CInterface::Flush(); 
-    //         CMSPrompt("Press any key to exit..."); 
-    //         getchar(); 
-    //         return ; 
-    //     } else {
-    //         cout << "_default" << endl; 
-    //         continue; 
-    //     }   
-    //     break;   
-    // }
+    while (1) {
+        // 用户选项初始化
+        string userOption = "#"; 
+        CTeacher::ShowOptionsLv1(teacher); 
+        CInterface::GetOption("Please select", userOption); 
+        if (userOption == "1") {
+            // 查看个人信息
+            CTeacher::QueInfo(teacher); 
+            continue; 
+        } else if (userOption == "2") {
+            // 修改个人密码
+            CTeacher::ModPassword(teacher); 
+            continue; 
+        } else if (userOption == "3") {
+            // 查看课程列表
+            CTeacher::QueCourseList(); 
+            continue; 
+        } else if (userOption == "4") {
+            // 查看学生列表
+            CTeacher::QueStudentList(); 
+            continue; 
+        } else if (userOption == "0") {
+            // 退出系统
+            CInterface::Flush(); 
+            CMSPrompt("Press any key to exit..."); 
+            getchar(); 
+            return ; 
+        } else {
+            cout << "_default" << endl; 
+            continue; 
+        }   
+        break;   
+    }
 }
 
 void CInterface::GetOption(const string &prompt, string& option) {
