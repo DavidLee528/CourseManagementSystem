@@ -40,8 +40,8 @@ public:
 
     static bool AddStudentData(const CStudent &student); 
     static bool DelStudentData(const string &username); 
-    static bool ModStudentData(const CStudent &student); 
-    static bool QueStudentData(); 
+    static bool ModStudentData(const CStudent &student, const string &username); 
+    static bool QueStudentData(vector<CStudent> &studentList, const string &username = "$default$"); 
 
     static bool AddCourseData(const CCourse &course); 
     static bool DelCourseData(const string &courseNumber); 
