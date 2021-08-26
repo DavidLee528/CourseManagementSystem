@@ -160,9 +160,58 @@ void CInterface::aMain(CAdmin &admin) {
     }
 }
 
+
 void CInterface::sMain(CStudent &student) {
-    // 高泽军完成
+    while (1) {
+        string userOption1 = "#"; 
+        string userOption2 = "#"; 
+        CStudent::ShowOptionsLv1(); 
+        CInterface::GetOption("Please select", userOption1); 
+        if (userOption1 == "1") {
+            // 查询个人信息，选择是否修改密码
+            CStudent::ShowOptionsLv2_1(); 
+            CInterface::GetOption("Please select", userOption2); 
+            if (userOption2 == "0") continue; 
+            CStudent::Check_Change(userOption2, student); 
+            continue; 
+        } else if (userOption1 == "2") {
+            // 选课
+            // CStudent::ShowOptionsLv2_2(); 
+            // CInterface::GetOption("Please select", userOption2); 
+            // if (userOption2 == "0") continue; 
+            CStudent::Selection(student);
+            continue; 
+        } else if (userOption1 == "3") {
+            // 查看选课结果
+            // CStudent::ShowOptionsLv2_3(); 
+            // CInterface::GetOption("Please select", userOption2); 
+            // if (userOption2 == "0") continue; 
+            CStudent::CheckCourse(student);
+            continue; 
+        } else if (userOption1 == "4") {
+            // 退选
+            // CStudent::ShowOptionsLv2_4(); 
+            // CInterface::GetOption("Please select", userOption2); 
+            // if (userOption2 == "0") continue; 
+            CStudent::Deselection(student);
+            continue; 
+        } else if (userOption1 == "0") {
+            // 退出系统
+            CInterface::Flush(); 
+            CMSPrompt("Press any key to exit..."); 
+            getchar(); 
+            return ; 
+        } else {
+            cout << "_default" << endl; 
+            continue; 
+        }
+
+        break;   
+    }
+
+
 }
+
 
 void CInterface::tMain(CTeacher &teacher) {
     // while (1) {
