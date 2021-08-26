@@ -21,9 +21,10 @@ CTeacher::CTeacher() {
 }
 
 CTeacher::CTeacher(const string &_username): username(_username) {
-
-    cout << "hello teacher. " << endl; 
-
+    CTeacher t; 
+    CData::FindTeacherByUsername(username, t); 
+    name = t.name; 
+    major = t.major; 
 }
 
 CTeacher::CTeacher(const CTeacher &rhs) {

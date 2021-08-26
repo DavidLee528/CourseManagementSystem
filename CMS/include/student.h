@@ -38,8 +38,7 @@ public:
     void SetStudentMajor(const string &rhs); 
     void SetStudentCourse(const string &rhs); 
 
-    static void ShowOptionsLv1(); 
-    static void ShowOptionsLv2_1(); 
+    static void ShowOptionsLv1(const CStudent &student); 
     
     static bool Check_Change(const string &option, CStudent &student); 
     static bool Selection(CStudent &student); 

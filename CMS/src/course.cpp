@@ -31,6 +31,7 @@ istream& operator>>(istream &is, CCourse &c) {
     cout << "实验时长："; is >> num; c.SetExperimentHours(num); 
     cout << "课程学分："; is >> num; c.SetCredit(num); 
     cout << "学    期："; is >> num; c.SetCourseSemester(num); 
+    return is; 
 }
 
 const string & CCourse::GetCourseNumber() const {

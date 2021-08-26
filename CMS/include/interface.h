@@ -1,3 +1,9 @@
+/*
+ * @ Author: 李天昊
+ * @ Description: 
+ * @ Date: 
+ * @ E-mail: 13121515269@163.com
+ */
 #ifndef _INTERFACE_H
 #define _INTERFACE_H
 
@@ -29,7 +35,7 @@ public:
 
     static void Menu(); 
     static void Flush(); 
-    static string& GetDate(); 
+    // static string & GetDate(string &time); 
 
 
     

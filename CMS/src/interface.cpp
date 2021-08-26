@@ -103,7 +103,7 @@ bool CInterface::UserInfoInput(std::string &username, std::string &password) {
     cout << "Username: "; 
     cin >> username; 
     #ifdef _WIN32
-        WindowsGetPass("Password: ", password)
+        WindowsGetPass("Password: ", password); 
     #else
         password = getpass("Password: "); 
     #endif
@@ -163,7 +163,7 @@ void CInterface::aMain(CAdmin &admin) {
 void CInterface::sMain(CStudent &student) {
     while (1) {
         string userOption = "#"; 
-        CStudent::ShowOptionsLv1(); 
+        CStudent::ShowOptionsLv1(student); 
         CInterface::GetOption("Please select", userOption); 
         if (userOption == "1") {
             // 查询个人信息
@@ -296,28 +296,27 @@ void CInterface::Flush() {
  * @param {*} void
  * @return {*} 返回一个string对象，格式如"2021年8月24日下午"
  */
-string & CInterface::GetDate() {
-    // TODO: 获取当前日期
-    // 
-    struct tm *local;
-	time_t t = time(0);
+// string & CInterface::GetDate(string &time) {
+     
+//     struct tm *local;
+// 	time_t t = time(0);
 	
-	char tmp[64];
-	strftime(tmp, sizeof(tmp), "%Y年%m月%d日",localtime(&t) );
-	string time = tmp;
+// 	char tmp[64];
+// 	strftime(tmp, sizeof(tmp), "%Y年%m月%d日",localtime(&t) );
+// 	time = tmp;
 	
-	int h;
-	char hours[20];
-	strftime(hours, sizeof(hours), "%H", localtime(&t));
-	h = atoi(hours);
+// 	int h;
+// 	char hours[20];
+// 	strftime(hours, sizeof(hours), "%H", localtime(&t));
+// 	h = atoi(hours);
 	
-	if (h < 5) time += "凌晨";
-	else if (h < 8) time += "早晨"; 
-	else if (h < 11) time += "上午";
-	else if (h < 13) time += "中午";
-	else if (h < 16) time += "下午";
-	else if (h < 19) time += "傍晚";
-	else if (h < 24) time += "晚上";
+// 	if (h < 5) time += "凌晨";
+// 	else if (h < 8) time += "早晨"; 
+// 	else if (h < 11) time += "上午";
+// 	else if (h < 13) time += "中午";
+// 	else if (h < 16) time += "下午";
+// 	else if (h < 19) time += "傍晚";
+// 	else if (h < 24) time += "晚上";
 	
-	return time;
-}
+// 	return time;
+// }

@@ -32,7 +32,8 @@ void CAdmin::ShowOptionsLv1() {
     #ifndef DEBUG 
     system("clear"); 
     #endif
-    CInterface::CMSPrompt("你好, admin!"); 
+    string greeting = "你好, admin!"; 
+    CInterface::CMSPrompt(greeting); 
     cout << endl << endl; 
     cout << " [1] 教师管理" << endl; 
     cout << " [2] 学生管理" << endl; 

@@ -29,7 +29,7 @@ CStudent::CStudent(const string &_username): username(_username) {
 }
 
 CStudent::CStudent(const CStudent &rhs) {
-
+    *this = rhs; 
 }
 
 CStudent::~CStudent() {
@@ -105,11 +105,12 @@ void CStudent::SetStudentCourse(const string &rhs) {
     course = rhs;
 }
 
-void CStudent::ShowOptionsLv1() {
+void CStudent::ShowOptionsLv1(const CStudent &student) {
     #ifndef DEBUG
     SYSTEM_CLEAR_SCREEN
     #endif
-    CInterface::CMSPrompt("你好, student!"); 
+    string greeting = "你好，" + student.GetStudentName(); 
+    CInterface::CMSPrompt(greeting); 
     cout << endl << endl;
     cout << " [1] 查看个人信息" << endl;
     cout << " [2] 修改个人密码" << endl;
@@ -127,6 +128,7 @@ bool CStudent::CheckSelfInfo(CStudent &student) {
     cout << endl; 
     CInterface::Flush(); 
     getchar(); 
+    return true; 
 }
 
 bool CStudent::ChangePass(const string &newPassword) {
