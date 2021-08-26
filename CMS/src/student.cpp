@@ -25,15 +25,15 @@ CStudent::~CStudent() {
     
 }
 
-string & CStudent::GetStudentUsername() {
+const string & CStudent::GetStudentUsername() const {
     return username; 
 }
 
-string & CStudent::GetStudentName() {
+const string & CStudent::GetStudentName() const {
     return name; 
 }
 
-string & CStudent::GetStudentMajor() {
+const string & CStudent::GetStudentMajor() const {
     return major; 
 }
 
@@ -53,3 +53,30 @@ void CStudent::SetStudentMajor(const string &rhs) {
     major = rhs; 
 }
 
+/**
+ * @description: 名  称: 选课
+ *               调用者: CInterface类sMain函数
+ *               功  能: 在CStudent类对象的私有数据成员course
+ *                       后追加一个6位课程编码
+ *               备  注: 000000,600001,600003,600008
+ *                      初始字符串为000000
+ *                      每次追加,xxxxxx
+ * @param {CStudent} &student 
+ * @return {*} 为真则成功
+ */
+bool CStudent::SelectCourse(CStudent &student) {
+
+}
+
+/**
+ * @description: 退选课
+ *               调用者: CInterface类sMain函数
+ *               功  能: 在CStudent类对象的私有数据成员course
+ *                       中删除一个指定的6位课程编码
+ *               备  注: 别忘记删除逗号
+ * @param {CStudent} &student
+ * @return {*} 为真则成功
+ */
+bool CStudent::CancelCourse(CStudent &student) {
+
+}
